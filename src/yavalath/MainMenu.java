@@ -27,21 +27,26 @@ public class MainMenu extends JFrame {
         newGamePanel.add(BorderLayout.WEST,labels);
         newGamePanel.add(BorderLayout.CENTER,playerSelectors);
         newGamePanel.add(BorderLayout.EAST,colorPickers);
-
         labels.setLayout(new BoxLayout(labels,BoxLayout.Y_AXIS));
         playerSelectors.setLayout(new BoxLayout(playerSelectors,BoxLayout.Y_AXIS));
         colorPickers.setLayout(new BoxLayout(colorPickers,BoxLayout.Y_AXIS));
 
         labels.add(new Label("Játékos 1:"));
+        labels.add(Box.createVerticalGlue());
         labels.add(new Label("Játékos 2:"));
+        labels.add(Box.createVerticalGlue());
         labels.add(new Label("Játékos 3:"));
 
         playerSelectors.add(player1TypeSelector);
+        labels.add(Box.createVerticalGlue());
         playerSelectors.add(player2TypeSelector);
+        labels.add(Box.createVerticalGlue());
         playerSelectors.add(player3TypeSelector);
 
         colorPickers.add(player1ColorPicker);
+        labels.add(Box.createVerticalGlue());
         colorPickers.add(player2ColorPicker);
+        labels.add(Box.createVerticalGlue());
         colorPickers.add(player3ColorPicker);
 
         this.add(BorderLayout.NORTH, newGamePanel);
