@@ -5,12 +5,17 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainMenu extends JFrame {
     private static final PlayerTypeSelector player1TypeSelector = new PlayerTypeSelector();
     private static final PlayerTypeSelector player2TypeSelector = new PlayerTypeSelector();
     private static final PlayerTypeSelector player3TypeSelector = new PlayerTypeSelector();
-    private static final JButton startGame = new JButton("Játék indítása");
+    private static final ColorPicker player1ColorPicker = new ColorPicker();
+    private static final ColorPicker player2ColorPicker = new ColorPicker();
+    private static final ColorPicker player3ColorPicker = new ColorPicker();
+    private static final JButton startGameButton = new JButton("Játék indítása");
 
     public static Player.Type getPlayer1Type() {
         return (Player.Type) player1TypeSelector.getSelectedItem();
@@ -20,6 +25,16 @@ public class MainMenu extends JFrame {
     }
     public static Player.Type getPlayer3Type() {
         return (Player.Type) player3TypeSelector.getSelectedItem();
+    }
+
+    public static Color getPlayer1Color() {
+        return player1ColorPicker.currentColor;
+    }
+    public static Color getPlayer2Color() {
+        return player2ColorPicker.currentColor;
+    }
+    public static Color getPlayer3Color() {
+        return player3ColorPicker.currentColor;
     }
 
     private void initializeComponents() {
@@ -67,17 +82,18 @@ public class MainMenu extends JFrame {
         colorPickerGBC.weightx = 0.5;
 
         colorPickerGBC.gridy = 1;
-        newGamePanel.add(new ColorPicker(),colorPickerGBC);
+        newGamePanel.add(player1ColorPicker,colorPickerGBC);
         colorPickerGBC.gridy = 2;
-        newGamePanel.add(new ColorPicker(),colorPickerGBC);
+        newGamePanel.add(player1ColorPicker,colorPickerGBC);
         colorPickerGBC.gridy = 3;
-        newGamePanel.add(new ColorPicker(),colorPickerGBC);
+        newGamePanel.add(player1ColorPicker,colorPickerGBC);
 
 
-        startGame.setActionCommand("start game");
-        startGame.setEnabled(false);
+        startGameButton.setActionCommand("start game");
+        startGameButton.setEnabled(false);
+        startGameButton.addActionListener(new ButtonListener());
         middleGBC.gridy = 4;
-        newGamePanel.add(startGame,middleGBC);
+        newGamePanel.add(startGameButton,middleGBC);
 
         this.add(BorderLayout.NORTH, newGamePanel);
         this.add(BorderLayout.CENTER, new JSeparator());
@@ -100,7 +116,7 @@ public class MainMenu extends JFrame {
         private static class OnChangeListener implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
-                startGame.setEnabled(e.getActionCommand().equals("player type changed") && !MainMenu.getPlayer1Type().equals(Player.Type.NONE) && !MainMenu.getPlayer2Type().equals(Player.Type.NONE));
+                startGameButton.setEnabled(e.getActionCommand().equals("player type changed") && !getPlayer1Type().equals(Player.Type.NONE) && !getPlayer2Type().equals(Player.Type.NONE));
             }
         }
     }
@@ -109,6 +125,7 @@ public class MainMenu extends JFrame {
         private Color currentColor;
         public ColorPicker() {
             currentColor = Color.WHITE;
+            setActionCommand("color picker");
             addActionListener(new ColorPickerActionListener());
             setBackground(currentColor);
         }
@@ -116,12 +133,28 @@ public class MainMenu extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                ColorPicker cp = (ColorPicker) e.getSource();
-                Color selected = JColorChooser.showDialog(cp.getParent(),"Válassz színt",cp.currentColor);
-                if(selected != null) {
-                    cp.currentColor = selected;
-                    cp.setBackground(currentColor);
+                if(e.getActionCommand().equals("color picker")) {
+                    ColorPicker cp = (ColorPicker) e.getSource();
+                    Color selected = JColorChooser.showDialog(cp.getParent(), "Válassz színt", cp.currentColor);
+                    if (selected != null) {
+                        cp.currentColor = selected;
+                        cp.setBackground(currentColor);
+                    }
                 }
+            }
+        }
+    }
+
+    public static class ButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(e.getActionCommand().equals("start game")) {
+                Map<Integer,Player> players = HashMap.newHashMap(3);
+                players.put(1,new Player("1. Játékos",getPlayer1Color(),getPlayer1Type()));
+                players.put(2,new Player("2. Játékos",getPlayer2Color(),getPlayer2Type()));
+                players.put(3,new Player("3. Játékos",getPlayer3Color(),getPlayer3Type()));
+                Game.createGame(players);
+                SwingUtilities.getWindowAncestor((Component) e.getSource()).dispose();
             }
         }
     }
