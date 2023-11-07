@@ -1,13 +1,15 @@
 package yavalath;
 
 import java.awt.*;
+import java.util.EnumSet;
+import java.util.Set;
 
 public class Player {
     private String name;
     private Color color;
     public enum Type {
-        HUMAN("Ember"),
         NONE("Nem játszik"),
+        HUMAN("Ember"),
         BOT("Bot");
         private final String value;
         Type(String s) {
@@ -48,5 +50,8 @@ public class Player {
 
     public void setType(Type type) {
         this.type = type;
+    }
+    public static Set<Type> getAllTypes() {
+        return EnumSet.allOf(Type.class);
     }
 }
