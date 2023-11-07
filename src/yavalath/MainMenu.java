@@ -7,9 +7,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainMenu extends JFrame {
-    private final PlayerTypeSelector player1TypeSelector = new PlayerTypeSelector();
-    private final PlayerTypeSelector player2TypeSelector = new PlayerTypeSelector();
-    private final PlayerTypeSelector player3TypeSelector = new PlayerTypeSelector();
+    private static final PlayerTypeSelector player1TypeSelector = new PlayerTypeSelector();
+    private static final PlayerTypeSelector player2TypeSelector = new PlayerTypeSelector();
+    private static final PlayerTypeSelector player3TypeSelector = new PlayerTypeSelector();
+    private static final JButton startGame = new JButton("Játék indítása");
+
+    public static Player.Type getPlayer1Type() {
+        return (Player.Type) player1TypeSelector.getSelectedItem();
+    }
+    public static Player.Type getPlayer2Type() {
+        return (Player.Type) player2TypeSelector.getSelectedItem();
+    }
+    public static Player.Type getPlayer3Type() {
+        return (Player.Type) player3TypeSelector.getSelectedItem();
+    }
+
     private void initializeComponents() {
         JPanel newGamePanel = new JPanel();
         newGamePanel.setLayout(new GridBagLayout());
@@ -61,6 +73,12 @@ public class MainMenu extends JFrame {
         colorPickerGBC.gridy = 3;
         newGamePanel.add(new ColorPicker(),colorPickerGBC);
 
+
+        startGame.setActionCommand("start game");
+        startGame.setEnabled(false);
+        middleGBC.gridy = 4;
+        newGamePanel.add(startGame,middleGBC);
+
         this.add(BorderLayout.NORTH, newGamePanel);
         this.add(BorderLayout.CENTER, new JSeparator());
     }
@@ -76,6 +94,14 @@ public class MainMenu extends JFrame {
             for(Player.Type type : Player.getAllTypes()) {
                 addItem(type);
             }
+            setActionCommand("player type changed");
+            addActionListener(new OnChangeListener());
+        }
+        private static class OnChangeListener implements ActionListener {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startGame.setEnabled(e.getActionCommand().equals("player type changed") && !MainMenu.getPlayer1Type().equals(Player.Type.NONE) && !MainMenu.getPlayer2Type().equals(Player.Type.NONE));
+            }
         }
     }
 
@@ -86,7 +112,7 @@ public class MainMenu extends JFrame {
             addActionListener(new ColorPickerActionListener());
             setBackground(currentColor);
         }
-        public class ColorPickerActionListener implements ActionListener {
+        private class ColorPickerActionListener implements ActionListener {
 
             @Override
             public void actionPerformed(ActionEvent e) {
