@@ -1,10 +1,11 @@
 package yavalath;
 
-import java.io.*;
-import java.util.Properties;
+
+import com.formdev.flatlaf.FlatLightLaf;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-
+    public static void main(String[] args) {
+        FlatLightLaf.setup();
+        MainMenu.main(args);
     }
 }

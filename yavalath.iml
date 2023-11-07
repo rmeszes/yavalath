@@ -7,6 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="formdev.flatlaf" level="project" />
   </component>
   <component name="SonarLintModuleSettings">
     <option name="uniqueId" value="31eaa4ef-e845-4e7b-862b-d6d7f294817c" />

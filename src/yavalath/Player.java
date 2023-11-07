@@ -6,8 +6,9 @@ public class Player {
     private String name;
     private Color color;
     public enum Type {
-        HUMAN("human"),
-        BOT("bot");
+        HUMAN("Ember"),
+        NONE("Nem játszik"),
+        BOT("Bot");
         private final String value;
         Type(String s) {
             value = s;
