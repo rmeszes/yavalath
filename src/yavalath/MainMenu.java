@@ -17,6 +17,10 @@ public class MainMenu extends JFrame {
     private static final ColorPicker player3ColorPicker = new ColorPicker();
     private static final JButton startGameButton = new JButton("Játék indítása");
 
+    private static final JTextField player1NameField = new JTextField("Játékos 1");
+    private static final JTextField player2NameField = new JTextField("Játékos 2");
+    private static final JTextField player3NameField = new JTextField("Játékos 3");
+
     public static Player.Type getPlayer1Type() {
         return (Player.Type) player1TypeSelector.getSelectedItem();
     }
@@ -48,17 +52,46 @@ public class MainMenu extends JFrame {
         middleGBC.insets = new Insets(10,5,10,5);
         newGamePanel.add(new JLabel("Kérlek válaszd ki a játékosot típusát és színét:"),middleGBC);
 
+
+        final String TIPUS = "Típus:";
+        final String NEV = "Név:";
+
         GridBagConstraints labelGBC = new GridBagConstraints();
         labelGBC.insets = new Insets(5,5,5,0);
         labelGBC.fill = GridBagConstraints.VERTICAL;
         labelGBC.anchor = GridBagConstraints.FIRST_LINE_END;
         labelGBC.weightx = 0.5;
-        labelGBC.gridy = 1;
-        newGamePanel.add(new JLabel("Játékos 1:"),labelGBC);
+        middleGBC.gridy = 1;
+        newGamePanel.add(new JLabel("Játékos 1:"),middleGBC);
         labelGBC.gridy = 2;
-        newGamePanel.add(new JLabel("Játékos 2:"),labelGBC);
+        newGamePanel.add(new JLabel(NEV),labelGBC);
         labelGBC.gridy = 3;
-        newGamePanel.add(new JLabel("Játékos 3:"),labelGBC);
+        newGamePanel.add(new JLabel(TIPUS),labelGBC);
+        middleGBC.gridy = 4;
+        newGamePanel.add(new JLabel("Játékos 2:"),middleGBC);
+        labelGBC.gridy = 5;
+        newGamePanel.add(new JLabel(NEV),labelGBC);
+        labelGBC.gridy = 6;
+        newGamePanel.add(new JLabel(TIPUS),labelGBC);
+        middleGBC.gridy = 7;
+        newGamePanel.add(new JLabel("Játékos 3:"),middleGBC);
+        labelGBC.gridy = 8;
+        newGamePanel.add(new JLabel(NEV),labelGBC);
+        labelGBC.gridy = 9;
+        newGamePanel.add(new JLabel(TIPUS),labelGBC);
+
+        GridBagConstraints nameFieldGBC = new GridBagConstraints();
+        nameFieldGBC.insets = new Insets(5,5,5,5);
+        nameFieldGBC.gridx = 1;
+        nameFieldGBC.gridwidth = 3;
+        nameFieldGBC.weightx = 0.5;
+        nameFieldGBC.fill = GridBagConstraints.HORIZONTAL;
+        nameFieldGBC.gridy = 2;
+        newGamePanel.add(player1NameField,nameFieldGBC);
+        nameFieldGBC.gridy = 5;
+        newGamePanel.add(player2NameField,nameFieldGBC);
+        nameFieldGBC.gridy = 8;
+        newGamePanel.add(player3NameField,nameFieldGBC);
 
         GridBagConstraints playerTypeSelectorGBC = new GridBagConstraints();
         playerTypeSelectorGBC.insets = new Insets(5,5,5,5);
@@ -66,11 +99,11 @@ public class MainMenu extends JFrame {
         playerTypeSelectorGBC.fill = GridBagConstraints.HORIZONTAL;
         playerTypeSelectorGBC.gridwidth = 2;
         playerTypeSelectorGBC.weightx = 0.5;
-        playerTypeSelectorGBC.gridy = 1;
-        newGamePanel.add(player1TypeSelector,playerTypeSelectorGBC);
-        playerTypeSelectorGBC.gridy = 2;
-        newGamePanel.add(player2TypeSelector,playerTypeSelectorGBC);
         playerTypeSelectorGBC.gridy = 3;
+        newGamePanel.add(player1TypeSelector,playerTypeSelectorGBC);
+        playerTypeSelectorGBC.gridy = 6;
+        newGamePanel.add(player2TypeSelector,playerTypeSelectorGBC);
+        playerTypeSelectorGBC.gridy = 9;
         newGamePanel.add(player3TypeSelector,playerTypeSelectorGBC);
 
 
@@ -81,18 +114,18 @@ public class MainMenu extends JFrame {
         colorPickerGBC.anchor = GridBagConstraints.PAGE_END;
         colorPickerGBC.weightx = 0.5;
 
-        colorPickerGBC.gridy = 1;
-        newGamePanel.add(player1ColorPicker,colorPickerGBC);
-        colorPickerGBC.gridy = 2;
-        newGamePanel.add(player1ColorPicker,colorPickerGBC);
         colorPickerGBC.gridy = 3;
         newGamePanel.add(player1ColorPicker,colorPickerGBC);
+        colorPickerGBC.gridy = 6;
+        newGamePanel.add(player2ColorPicker,colorPickerGBC);
+        colorPickerGBC.gridy = 9;
+        newGamePanel.add(player3ColorPicker,colorPickerGBC);
 
 
         startGameButton.setActionCommand("start game");
         startGameButton.setEnabled(false);
         startGameButton.addActionListener(new ButtonListener());
-        middleGBC.gridy = 4;
+        middleGBC.gridy = 10;
         newGamePanel.add(startGameButton,middleGBC);
 
         this.add(BorderLayout.NORTH, newGamePanel);
@@ -101,7 +134,7 @@ public class MainMenu extends JFrame {
     public MainMenu() {
         super("Yavalath - Főmenü");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(350,400);
+        setSize(350,700);
         setResizable(false);
         initializeComponents();
     }
@@ -153,7 +186,7 @@ public class MainMenu extends JFrame {
                 players.put(1,new Player("1. Játékos",getPlayer1Color(),getPlayer1Type()));
                 players.put(2,new Player("2. Játékos",getPlayer2Color(),getPlayer2Type()));
                 players.put(3,new Player("3. Játékos",getPlayer3Color(),getPlayer3Type()));
-                new GameWindow(players);
+                //TODO: játék indítása
                 SwingUtilities.getWindowAncestor((Component) e.getSource()).dispose();
             }
         }
