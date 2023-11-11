@@ -4,7 +4,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.AbstractDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -205,10 +204,11 @@ public class MainMenu extends JFrame {
         public void actionPerformed(ActionEvent e) {
             if(e.getActionCommand().equals("start game") && canGameStart()) {
                 Map<Integer,Player> players = HashMap.newHashMap(3);
-                players.put(1,new Player(player1NameField.getName(),getPlayer1Color(),getPlayer1Type()));
-                players.put(2,new Player(player2NameField.getName(),getPlayer2Color(),getPlayer2Type()));
-                players.put(3,new Player(player3NameField.getName(),getPlayer3Color(),getPlayer3Type()));
+                players.put(1,new Player(player1NameField.getText(),getPlayer1Color(),getPlayer1Type()));
+                players.put(2,new Player(player2NameField.getText(),getPlayer2Color(),getPlayer2Type()));
+                players.put(3,new Player(player3NameField.getText(),getPlayer3Color(),getPlayer3Type()));
                 //TODO: játék indítása
+                System.out.println(players);
                 SwingUtilities.getWindowAncestor((Component) e.getSource()).dispose();
             }
         }

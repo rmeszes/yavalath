@@ -54,4 +54,8 @@ public class Player {
     public static Set<Type> getAllTypes() {
         return EnumSet.allOf(Type.class);
     }
+
+    public String toString() {
+        return '{' + "name=" + name + "color=" + color.toString() + "type=" + type;
+    }
 }
