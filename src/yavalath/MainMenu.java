@@ -234,8 +234,20 @@ public class MainMenu extends JFrame {
             onUpdate();
         }
     }
+    private static boolean validateThirdPlayer() {
+        if(player3NameField.getText().isEmpty()) {
+            return false;
+        }
 
-    public static boolean canGameStart() {
+        if(player1ColorPicker.getBackground().equals(player3ColorPicker.getBackground()) || player2ColorPicker.getBackground().equals(player3ColorPicker.getBackground())) {
+            return false;
+        }
+
+        //egyező nevek
+        return !player1NameField.getText().equals(player3NameField.getText()) && !player2NameField.getText().equals(player3NameField.getText());
+    }
+
+    private static boolean canGameStart() {
         if(player1NameField.getText().equals(player2NameField.getText())) { //egyező nevek
             return false;
         }
@@ -253,16 +265,7 @@ public class MainMenu extends JFrame {
             return false;
         } else {
             if(!getPlayer3Type().equals(Player.Type.NONE)) { //játszik a 3. játékos is
-                if(player3NameField.getText().isEmpty()) {
-                   return false;
-                }
-
-                if(player1ColorPicker.getBackground().equals(player3ColorPicker.getBackground()) || player2ColorPicker.getBackground().equals(player3ColorPicker.getBackground())) {
-                    return false;
-                }
-
-                //egyező nevek
-                return !player1NameField.getText().equals(player3NameField.getText()) && !player2NameField.getText().equals(player3NameField.getText());
+                return validateThirdPlayer();
             }
         }
         return true;
