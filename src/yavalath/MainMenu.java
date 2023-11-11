@@ -205,9 +205,9 @@ public class MainMenu extends JFrame {
         public void actionPerformed(ActionEvent e) {
             if(e.getActionCommand().equals("start game") && canGameStart()) {
                 Map<Integer,Player> players = HashMap.newHashMap(3);
-                players.put(1,new Player("1. Játékos",getPlayer1Color(),getPlayer1Type()));
-                players.put(2,new Player("2. Játékos",getPlayer2Color(),getPlayer2Type()));
-                players.put(3,new Player("3. Játékos",getPlayer3Color(),getPlayer3Type()));
+                players.put(1,new Player(player1NameField.getName(),getPlayer1Color(),getPlayer1Type()));
+                players.put(2,new Player(player2NameField.getName(),getPlayer2Color(),getPlayer2Type()));
+                players.put(3,new Player(player3NameField.getName(),getPlayer3Color(),getPlayer3Type()));
                 //TODO: játék indítása
                 SwingUtilities.getWindowAncestor((Component) e.getSource()).dispose();
             }
