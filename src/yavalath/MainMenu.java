@@ -194,6 +194,7 @@ public class MainMenu extends JFrame {
                         cp.currentColor = selected;
                         cp.setBackground(currentColor);
                     }
+                    startGameButton.setEnabled(canGameStart());
                 }
             }
         }
@@ -238,6 +239,9 @@ public class MainMenu extends JFrame {
         if(player1NameField.getText().equals(player2NameField.getText())) { //egyező nevek
             return false;
         }
+        if(player1ColorPicker.getBackground().equals(player2ColorPicker.getBackground())) { //egyező színek
+            return false;
+        }
 
 
         if(getPlayer1Type().equals(Player.Type.NONE) || getPlayer2Type().equals(Player.Type.NONE)) {
@@ -251,6 +255,10 @@ public class MainMenu extends JFrame {
             if(!getPlayer3Type().equals(Player.Type.NONE)) { //játszik a 3. játékos is
                 if(player3NameField.getText().isEmpty()) {
                    return false;
+                }
+
+                if(player1ColorPicker.getBackground().equals(player3ColorPicker.getBackground()) || player2ColorPicker.getBackground().equals(player3ColorPicker.getBackground())) {
+                    return false;
                 }
 
                 //egyező nevek
