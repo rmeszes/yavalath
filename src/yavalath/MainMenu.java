@@ -2,6 +2,9 @@ package yavalath;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.AbstractDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +23,16 @@ public class MainMenu extends JFrame {
     private static final JTextField player1NameField = new JTextField("Játékos 1");
     private static final JTextField player2NameField = new JTextField("Játékos 2");
     private static final JTextField player3NameField = new JTextField("Játékos 3");
+
+    static {
+        TextFieldListener l = new TextFieldListener();
+        player1NameField.setEnabled(false);
+        player2NameField.setEnabled(false);
+        player3NameField.setEnabled(false);
+        player1NameField.getDocument().addDocumentListener(l);
+        player2NameField.getDocument().addDocumentListener(l);
+        player3NameField.getDocument().addDocumentListener(l);
+    }
 
     public static Player.Type getPlayer1Type() {
         return (Player.Type) player1TypeSelector.getSelectedItem();
@@ -149,7 +162,15 @@ public class MainMenu extends JFrame {
         private static class OnChangeListener implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
-                startGameButton.setEnabled(e.getActionCommand().equals("player type changed") && !getPlayer1Type().equals(Player.Type.NONE) && !getPlayer2Type().equals(Player.Type.NONE));
+                startGameButton.setEnabled(e.getActionCommand().equals("player type changed") && canGameStart());
+                PlayerTypeSelector source = (PlayerTypeSelector) e.getSource();
+                if(source == player1TypeSelector) {
+                    player1NameField.setEnabled(getPlayer1Type() != Player.Type.NONE);
+                } else if (source == player2TypeSelector) {
+                    player2NameField.setEnabled(getPlayer2Type() != Player.Type.NONE);
+                }else if (source == player3TypeSelector) {
+                    player3NameField.setEnabled(getPlayer3Type() != Player.Type.NONE);
+                }
             }
         }
     }
@@ -181,7 +202,7 @@ public class MainMenu extends JFrame {
     public static class ButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(e.getActionCommand().equals("start game")) {
+            if(e.getActionCommand().equals("start game") && canGameStart()) {
                 Map<Integer,Player> players = HashMap.newHashMap(3);
                 players.put(1,new Player("1. Játékos",getPlayer1Color(),getPlayer1Type()));
                 players.put(2,new Player("2. Játékos",getPlayer2Color(),getPlayer2Type()));
@@ -190,6 +211,53 @@ public class MainMenu extends JFrame {
                 SwingUtilities.getWindowAncestor((Component) e.getSource()).dispose();
             }
         }
+    }
+
+    public static class TextFieldListener implements DocumentListener {
+        private void onUpdate() {
+            startGameButton.setEnabled(canGameStart());
+        }
+
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            onUpdate();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            onUpdate();
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            onUpdate();
+        }
+    }
+
+    public static boolean canGameStart() {
+        if(player1NameField.getText().equals(player2NameField.getText())) { //egyező nevek
+            return false;
+        }
+
+
+        if(getPlayer1Type().equals(Player.Type.NONE) || getPlayer2Type().equals(Player.Type.NONE)) {
+            return false;
+        }
+
+
+        if(player1NameField.getText().isEmpty() || player2NameField.getText().isEmpty()) {
+            return false;
+        } else {
+            if(!getPlayer3Type().equals(Player.Type.NONE)) { //játszik a 3. játékos is
+                if(player3NameField.getText().isEmpty()) {
+                   return false;
+                }
+
+                //egyező nevek
+                return !player1NameField.getText().equals(player3NameField.getText()) && !player2NameField.getText().equals(player3NameField.getText());
+            }
+        }
+        return true;
     }
 
     public static void main(String[] args) {
