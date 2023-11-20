@@ -209,7 +209,6 @@ public class MainMenu extends JFrame {
                 players.put(3,new Player(player3NameField.getText(),getPlayer3Color(),getPlayer3Type()));
                 Game.initializeGame(players);
                 new Game();
-                System.out.println(players);
                 SwingUtilities.getWindowAncestor((Component) e.getSource()).dispose();
             }
         }
@@ -243,6 +242,7 @@ public class MainMenu extends JFrame {
         if(player1ColorPicker.getBackground().equals(player3ColorPicker.getBackground()) || player2ColorPicker.getBackground().equals(player3ColorPicker.getBackground())) {
             return false;
         }
+        if(player3ColorPicker.getBackground().equals(Color.WHITE)) return false;
 
         //egyező nevek
         return !player1NameField.getText().equals(player3NameField.getText()) && !player2NameField.getText().equals(player3NameField.getText());
@@ -253,6 +253,9 @@ public class MainMenu extends JFrame {
             return false;
         }
         if(player1ColorPicker.getBackground().equals(player2ColorPicker.getBackground())) { //egyező színek
+            return false;
+        }
+        if(player1ColorPicker.getBackground().equals(Color.WHITE) || player2ColorPicker.getBackground().equals(Color.WHITE)) {
             return false;
         }
 
