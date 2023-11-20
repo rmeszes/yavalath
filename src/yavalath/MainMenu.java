@@ -1,16 +1,24 @@
 package yavalath;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class MainMenu extends JFrame {
+    private static final Logger logger = Logger.getLogger("MainMenu");
     private static final PlayerTypeSelector player1TypeSelector = new PlayerTypeSelector();
     private static final PlayerTypeSelector player2TypeSelector = new PlayerTypeSelector();
     private static final PlayerTypeSelector player3TypeSelector = new PlayerTypeSelector();
@@ -142,11 +150,24 @@ public class MainMenu extends JFrame {
 
         this.add(BorderLayout.NORTH, newGamePanel);
         this.add(BorderLayout.CENTER, new JSeparator());
+
+        JPanel loadGamePanel = new JPanel();
+        loadGamePanel.setLayout(new GridBagLayout());
+        GridBagConstraints loadbgc = new GridBagConstraints();
+        loadbgc.weightx = 0.5;
+        loadGamePanel.add(new JLabel("Vagy tölts be egy játékot"),loadbgc);
+        JButton loadGameButton = new JButton("Fájl kiválasztása..");
+        loadGameButton.setActionCommand("choose file");
+        loadGameButton.addActionListener(new ButtonListener());
+        loadbgc.gridy = 1;
+        loadGamePanel.add(loadGameButton,loadbgc);
+
+        this.add(loadGamePanel,BorderLayout.SOUTH);
     }
     public MainMenu() {
         super("Yavalath - Főmenü");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(350,700);
+        setSize(350,525);
         setResizable(false);
         initializeComponents();
     }
@@ -201,15 +222,31 @@ public class MainMenu extends JFrame {
 
     public static class ButtonListener implements ActionListener {
         @Override
-        public void actionPerformed(ActionEvent e) {
-            if(e.getActionCommand().equals("start game") && canGameStart()) {
+        public void actionPerformed(ActionEvent actionEvent) {
+            if(actionEvent.getActionCommand().equals("start game") && canGameStart()) {
                 Map<Integer,Player> players = HashMap.newHashMap(3);
                 players.put(1,new Player(player1NameField.getText(),getPlayer1Color(),getPlayer1Type()));
                 players.put(2,new Player(player2NameField.getText(),getPlayer2Color(),getPlayer2Type()));
                 players.put(3,new Player(player3NameField.getText(),getPlayer3Color(),getPlayer3Type()));
                 Game.initializeGame(players);
                 new Game();
-                SwingUtilities.getWindowAncestor((Component) e.getSource()).dispose();
+                SwingUtilities.getWindowAncestor((Component) actionEvent.getSource()).dispose();
+            } else if (actionEvent.getActionCommand().equals("choose file")) {
+                JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+                fc.addChoosableFileFilter(new FileNameExtensionFilter("Save file","ser"));
+                fc.setAcceptAllFileFilterUsed(false);
+                int value = fc.showOpenDialog(SwingUtilities.getWindowAncestor((Component) actionEvent.getSource()));
+
+                if(value == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    logger.info(() -> "File selected: " + file.getName());
+                    try(FileInputStream fileStream = new FileInputStream(file); ObjectInputStream objStream = new ObjectInputStream(fileStream)) {
+                        Game g = (Game) objStream.readObject();
+                        g.setVisible(true);
+                    } catch(IOException | ClassNotFoundException exception) {
+                        logger.warning(exception.getMessage());
+                    }
+                }
             }
         }
     }

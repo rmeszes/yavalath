@@ -1,10 +1,11 @@
 package yavalath;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.Set;
 
-public class Player {
+public class Player implements Serializable {
     private String name;
     private Color color;
     public enum Type {
