@@ -23,12 +23,12 @@ public class Game extends JFrame implements Serializable {
     private static final JLabel currentPlayerLabel = new JLabel();
     private static ColorCube currentPlayerColor;
 
-    public static void initializeGame(Map<Integer,Player> players) {
+    public static void initializeGame(Map<Integer,Player> players, int startingPlayer) {
         p1 = players.get(1);
         p2 = players.get(2);
         p3 = players.get(3);
         p3inGame = p3.getType() != Player.Type.NONE;
-        activePlayer = p1;
+        activePlayer = players.get(startingPlayer);
         currentPlayerColor = new ColorCube(new Dimension(30,30), p1.getColor());
         currentPlayerLabel.setFont(new Font("Sans Serif", Font.ITALIC, 30));
     }
@@ -43,7 +43,14 @@ public class Game extends JFrame implements Serializable {
 
         saveMenuItem.addActionListener(ae -> {
             try(FileOutputStream fileStream = new FileOutputStream("save.ser");ObjectOutputStream stream = new ObjectOutputStream(fileStream)) {
+                stream.writeObject(p1);
+                stream.writeObject(p2);
+                stream.writeObject(p3);
+                if(activePlayer == p1) stream.writeInt(1);
+                else if(activePlayer == p2) stream.writeInt(2);
+                else if(activePlayer == p3) stream.writeInt(3);
                 stream.writeObject(this);
+                logger.info("Saved to file succesfully!");
             } catch (IOException e) {
                 logger.warning(e.getMessage());
             }
@@ -101,7 +108,7 @@ public class Game extends JFrame implements Serializable {
         dummyPlayers.put(1,new Player("Játékos 1",Color.RED, Player.Type.HUMAN));
         dummyPlayers.put(2,new Player("Játékos 2",Color.MAGENTA, Player.Type.BOT));
         dummyPlayers.put(3,new Player("Játékos 3",Color.WHITE, Player.Type.NONE));
-        initializeGame(dummyPlayers);
+        initializeGame(dummyPlayers,1);
         new Game();
     }
 }
