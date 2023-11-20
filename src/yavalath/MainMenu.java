@@ -207,7 +207,7 @@ public class MainMenu extends JFrame {
                 players.put(1,new Player(player1NameField.getText(),getPlayer1Color(),getPlayer1Type()));
                 players.put(2,new Player(player2NameField.getText(),getPlayer2Color(),getPlayer2Type()));
                 players.put(3,new Player(player3NameField.getText(),getPlayer3Color(),getPlayer3Type()));
-                //TODO: játék indítása
+                new Game(players);
                 System.out.println(players);
                 SwingUtilities.getWindowAncestor((Component) e.getSource()).dispose();
             }
