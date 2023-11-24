@@ -1,19 +1,16 @@
 package yavalath;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.geom.Path2D;
+import java.io.Serializable;
 
-public class Hexagon extends JComponent {
+public class Hexagon extends JComponent implements Serializable {
     private Player takenBy;
-    private int centerX;
-    private int centerY;
-    private int size;
-    private int rotationAngle;
+    private final int centerX;
+    private final int centerY;
+    private final int size;
+    private final int rotationAngle;
 
     public Player getTakenBy() {
         return takenBy;

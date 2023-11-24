@@ -4,18 +4,30 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class HexagonalMap extends JPanel {
-    private static final Logger logger = Logger.getLogger("HexagonalMap");
+public class HexagonalMap extends JPanel implements Serializable {
+    private transient Logger logger = Logger.getLogger("HexagonalMap");
     private static final int HEX_RADIUS = 50;
     private static final int HEX_HEIGHT = (int) (Math.sqrt(3) * HEX_RADIUS);
     private static final int HEX_WIDTH = 2 * HEX_RADIUS;
     private static final int GRID_X_OFFSET = 50;
     private static final int GRID_Y_OFFSET = 50;
     private final List<Hexagon> hexagons;
+
+    public void reInitialize() {
+        logger = Logger.getLogger("HexagonalMap");
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                handleMouseClick(e.getX(), e.getY());
+            }
+        });
+
+    }
     public HexagonalMap(int size) {
         hexagons = new ArrayList<>();
 
@@ -43,9 +55,9 @@ public class HexagonalMap extends JPanel {
                 // Hexagon clicked
                 logger.finest(() ->"Hexagon clicked at (" + mouseX + ", " + mouseY + ")");
                 if(hexagon.getTakenBy() == null) {
-                    hexagon.setTakenBy(Game.getActivePlayer());
+                    hexagon.setTakenBy(((Game)SwingUtilities.getWindowAncestor(this)).getActivePlayer());
                     this.repaint();
-                    Game.nextPlayer();
+                    ((Game)SwingUtilities.getWindowAncestor(this)).nextPlayer();
                 }
                 break; // Stop searching once a hexagon is found
             }

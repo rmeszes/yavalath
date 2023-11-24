@@ -1,7 +1,6 @@
 package yavalath;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -228,8 +227,8 @@ public class MainMenu extends JFrame {
                 players.put(1,new Player(player1NameField.getText(),getPlayer1Color(),getPlayer1Type()));
                 players.put(2,new Player(player2NameField.getText(),getPlayer2Color(),getPlayer2Type()));
                 players.put(3,new Player(player3NameField.getText(),getPlayer3Color(),getPlayer3Type()));
-                Game.initializeGame(players,1);
-                new Game();
+                Game g = new Game();
+                g.initializeGame(players,1);
                 SwingUtilities.getWindowAncestor((Component) actionEvent.getSource()).dispose();
             } else if (actionEvent.getActionCommand().equals("choose file")) {
                 JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
@@ -241,13 +240,10 @@ public class MainMenu extends JFrame {
                     File file = fc.getSelectedFile();
                     logger.info(() -> "File selected: " + file.getName());
                     try(FileInputStream fileStream = new FileInputStream(file); ObjectInputStream objStream = new ObjectInputStream(fileStream)) {
-                        HashMap<Integer,Player> players = HashMap.newHashMap(3);
-                        players.put(1, (Player) objStream.readObject());
-                        players.put(2, (Player) objStream.readObject());
-                        players.put(3, (Player) objStream.readObject());
-                        int currentPlayer = objStream.readInt();
                         Game g = (Game) objStream.readObject();
+                        g.reInitialize();
                         g.setVisible(true);
+                        SwingUtilities.getWindowAncestor((Component) actionEvent.getSource()).dispose();
                     } catch(IOException | ClassNotFoundException exception) {
                         logger.warning(exception.getMessage());
                     }
