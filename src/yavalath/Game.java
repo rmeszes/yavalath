@@ -3,6 +3,8 @@ package yavalath;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -13,6 +15,7 @@ import java.util.logging.Logger;
 
 public class Game extends JFrame implements Serializable {
     private transient Logger logger = Logger.getLogger("Game");
+    private JMenuItem saveMenuItem;
     private Player p1;
     private Player p2;
     private Player p3;
@@ -24,6 +27,7 @@ public class Game extends JFrame implements Serializable {
 
     public void reInitialize() {
         logger = Logger.getLogger("Game");
+        saveMenuItem.addActionListener(new SaveMenuItemListener(this));
         map.reInitialize();
     }
 
@@ -39,20 +43,12 @@ public class Game extends JFrame implements Serializable {
 
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("Fájl");
-        JMenuItem saveMenuItem = new JMenuItem("Mentés és kilépés");
+        saveMenuItem = new JMenuItem("Mentés és kilépés");
         fileMenu.add(saveMenuItem);
         menuBar.add(fileMenu);
         this.add(menuBar,BorderLayout.SOUTH);
 
-        saveMenuItem.addActionListener(ae -> {
-            try(FileOutputStream fileStream = new FileOutputStream("save.ser");ObjectOutputStream stream = new ObjectOutputStream(fileStream)) {
-                stream.writeObject(this);
-                logger.info("Saved to file succesfully!");
-                System.exit(0);
-            } catch (IOException e) {
-                logger.warning(e.getMessage());
-            }
-        });
+        saveMenuItem.addActionListener(new SaveMenuItemListener(this));
 
         JPanel currentPlayerPanel = new JPanel();
         currentPlayerPanel.setBorder(new EmptyBorder(60,10,10,60));
@@ -112,5 +108,24 @@ public class Game extends JFrame implements Serializable {
         dummyPlayers.put(3,new Player("Játékos 3",Color.WHITE, Player.Type.NONE));
         Game g = new Game();
         g.initializeGame(dummyPlayers);
+    }
+
+    private class SaveMenuItemListener implements ActionListener {
+        private final Game parent;
+        public SaveMenuItemListener(Game parent) {
+            this.parent = parent;
+        }
+
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            try(FileOutputStream fileStream = new FileOutputStream("save.ser");ObjectOutputStream stream = new ObjectOutputStream(fileStream)) {
+                stream.writeObject(parent);
+                logger.info("Saved to file succesfully!");
+                System.exit(0);
+            } catch (IOException e) {
+                logger.warning(e.getMessage());
+            }
+        }
     }
 }
