@@ -228,7 +228,7 @@ public class MainMenu extends JFrame {
                 players.put(2,new Player(player2NameField.getText(),getPlayer2Color(),getPlayer2Type()));
                 players.put(3,new Player(player3NameField.getText(),getPlayer3Color(),getPlayer3Type()));
                 Game g = new Game();
-                g.initializeGame(players,1);
+                g.initializeGame(players);
                 SwingUtilities.getWindowAncestor((Component) actionEvent.getSource()).dispose();
             } else if (actionEvent.getActionCommand().equals("choose file")) {
                 JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));

@@ -11,6 +11,8 @@ public class Hexagon extends JComponent implements Serializable {
     private final int centerY;
     private final int size;
     private final int rotationAngle;
+    private int q; // axial coordinate
+    private int r; // axial coordinate
 
     public Player getTakenBy() {
         return takenBy;
@@ -19,12 +21,14 @@ public class Hexagon extends JComponent implements Serializable {
         takenBy = p;
     }
 
-    public Hexagon(int centerX, int centerY, int size, int rotationAngle) {
+    public Hexagon(int centerX, int centerY, int size, int rotationAngle, int q, int r) {
         this.centerX = centerX;
         this.centerY = centerY;
         this.size = size;
         takenBy = null;
         this.rotationAngle = rotationAngle;
+        this.q = q;
+        this.r = r;
     }
 
     public void draw(Graphics2D g2d) {
@@ -76,5 +80,13 @@ public class Hexagon extends JComponent implements Serializable {
             yPoints[i] = (int) (centerY + size * Math.sin(angle));
         }
         return yPoints;
+    }
+
+    public int getQ() {
+        return q;
+    }
+
+    public int getR() {
+        return r;
     }
 }

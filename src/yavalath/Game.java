@@ -27,12 +27,12 @@ public class Game extends JFrame implements Serializable {
         map.reInitialize();
     }
 
-    public void initializeGame(Map<Integer,Player> players, int startingPlayer) {
+    public void initializeGame(Map<Integer,Player> players) {
         p1 = players.get(1);
         p2 = players.get(2);
         p3 = players.get(3);
         p3inGame = p3.getType() != Player.Type.NONE;
-        activePlayer = players.get(startingPlayer);
+        activePlayer = p1;
         currentPlayerColor = new ColorCube(new Dimension(30, 30), p1.getColor());
         currentPlayerLabel.setFont(new Font("Sans Serif", Font.ITALIC, 30));
 
@@ -111,6 +111,6 @@ public class Game extends JFrame implements Serializable {
         dummyPlayers.put(2,new Player("Játékos 2",Color.MAGENTA, Player.Type.BOT));
         dummyPlayers.put(3,new Player("Játékos 3",Color.WHITE, Player.Type.NONE));
         Game g = new Game();
-        g.initializeGame(dummyPlayers,1);
+        g.initializeGame(dummyPlayers);
     }
 }
