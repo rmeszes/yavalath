@@ -30,3 +30,4 @@ bin/
 
 ### SonarLint ###
 /.idea/sonarlint/
+/save.ser
