@@ -58,8 +58,8 @@ public class HexagonalMap extends JPanel implements Serializable {
                     this.repaint();
                     switch(gameStateCheck()) {
                         case NORMAL -> game.nextPlayer();
-                        case PLAYERWON -> System.exit(2);
-                        case GAMEOVER -> System.exit(3);
+                        case PLAYERWON -> playerWon();
+                        case GAMEOVER -> gameOver();
                     }
                 }
                 logger.info(() ->"Hexagon clicked at (" + hexagon.getQ() + ", " + hexagon.getR() + ")\n" +
@@ -67,6 +67,30 @@ public class HexagonalMap extends JPanel implements Serializable {
                 break;
             }
         }
+    }
+
+    private void gameOver() {
+        if(game.getP1().isInGame()) showWinDialog(game.getP1());
+        if(game.getP2().isInGame()) showWinDialog(game.getP2());
+        if(game.getP3().isInGame()) showWinDialog(game.getP3());
+    }
+
+    private void playerWon() {
+        showWinDialog(game.getActivePlayer());
+    }
+
+    private void showWinDialog(Player winner) {
+        game.setEnabled(false);
+        JFrame winDialog = new JFrame();
+        String msg = winner.getName() + " nyert!";
+        JLabel label = new JLabel(msg);
+        label.setVerticalAlignment(SwingConstants.CENTER);
+        label.setVerticalTextPosition(SwingConstants.CENTER);
+        winDialog.add(label, BorderLayout.CENTER);
+        winDialog.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        winDialog.setSize(200,100);
+        winDialog.setLocationRelativeTo(null);
+        winDialog.setVisible(true);
     }
 
     @Override
@@ -116,6 +140,9 @@ public class HexagonalMap extends JPanel implements Serializable {
     private GameState gameStateCheck() {
         Player lastPlayer = game.getActivePlayer();
         int maxCount = 0;
+        for(Hexagon h : hexagons) {
+            h.setSameColorInRow(1);
+        }
         for(Hexagon base : hexagons) {
             if(base.getTakenBy() == lastPlayer) {
                 maxCount = checkNeighbors(base,maxCount);
@@ -124,7 +151,9 @@ public class HexagonalMap extends JPanel implements Serializable {
         return nextState(lastPlayer,maxCount);
     }
     private boolean isALowerNeighbor(Hexagon upper, Hexagon lower) {
-        return areNeighbors(upper, lower) && upper.getR() <= lower.getR() &&upper.getQ() <= lower.getQ();
+        if(areNeighbors(upper, lower) && (upper.getR() <= lower.getR() && upper.getQ() <= lower.getQ())){
+            return true;
+        } else return upper.getR() % 2 == 1 && upper.getQ() - lower.getQ() == -1 && upper.getR() - lower.getR() == 1;
     }
     private GameState nextState(Player lastPlayer, int maxCount) {
         if(maxCount >= 4) {
@@ -145,10 +174,16 @@ public class HexagonalMap extends JPanel implements Serializable {
     private int checkNeighbors(Hexagon base, int maxCount) {
         int found = 0;
         for (Hexagon rest : hexagons) {
-            if (isALowerNeighbor(base, rest) && base.getTakenBy() != null && (base.getTakenBy() == rest.getTakenBy()) && base.getSameColorInRow() >= rest.getSameColorInRow()) {
+            if (isALowerNeighbor(base, rest) && base.getTakenBy() != null && (base.getTakenBy() == rest.getTakenBy())) {
                 found++;
-                rest.setSameColorInRow(base.getSameColorInRow());
-                rest.addColorInRow();
+                int biggestNumber;
+                if(base.getSameColorInRow() > rest.getSameColorInRow()) {
+                    biggestNumber = base.getSameColorInRow() + 1;
+                } else {
+                    biggestNumber = rest.getSameColorInRow() + 1;
+                }
+                rest.setSameColorInRow(biggestNumber);
+                base.setSameColorInRow(biggestNumber);
                 int count = rest.getSameColorInRow();
                 if (count > maxCount) maxCount = count;
             }
@@ -159,6 +194,6 @@ public class HexagonalMap extends JPanel implements Serializable {
     private enum GameState {
         PLAYERWON,
         NORMAL,
-        GAMEOVER;
+        GAMEOVER
     }
 }
