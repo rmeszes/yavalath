@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class HexagonalMap extends JPanel implements Serializable {
-    private transient Logger logger = Logger.getLogger("HexagonalMap");
+    private static final Logger logger = Logger.getLogger("HexagonalMap");
     private static final int HEX_RADIUS = 50;
     private static final int HEX_HEIGHT = (int) (Math.sqrt(3) * HEX_RADIUS);
     private static final int HEX_WIDTH = 2 * HEX_RADIUS;
@@ -19,7 +19,6 @@ public class HexagonalMap extends JPanel implements Serializable {
     private final List<Hexagon> hexagons;
 
     public void reInitialize() {
-        logger = Logger.getLogger("HexagonalMap");
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

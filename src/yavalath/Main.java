@@ -26,6 +26,8 @@ public class Main {
                     break;
             }
         }
-        MainMenu.main(args);
+        MainMenu m = new MainMenu();
+        m.setLocationRelativeTo(null);
+        m.setVisible(true);
     }
 }

@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class Game extends JFrame implements Serializable {
-    private transient Logger logger = Logger.getLogger("Game");
+    private static final Logger logger = Logger.getLogger("Game");
     private JMenuItem saveMenuItem;
     private Player p1;
     private Player p2;
@@ -26,12 +26,11 @@ public class Game extends JFrame implements Serializable {
     private HexagonalMap map;
 
     public void reInitialize() {
-        logger = Logger.getLogger("Game");
         saveMenuItem.addActionListener(new SaveMenuItemListener(this));
         map.reInitialize();
     }
 
-    public void initializeGame(Map<Integer,Player> players) {
+    public void initializeGame(Map<Integer,Player> players,int mapSize) {
         p1 = players.get(1);
         p2 = players.get(2);
         p3 = players.get(3);
@@ -46,7 +45,7 @@ public class Game extends JFrame implements Serializable {
         saveMenuItem = new JMenuItem("Mentés és kilépés");
         fileMenu.add(saveMenuItem);
         menuBar.add(fileMenu);
-        this.add(menuBar,BorderLayout.SOUTH);
+        this.setJMenuBar(menuBar);
 
         saveMenuItem.addActionListener(new SaveMenuItemListener(this));
 
@@ -62,7 +61,7 @@ public class Game extends JFrame implements Serializable {
 
 
         this.add(currentPlayerPanel,BorderLayout.NORTH);
-        map = new HexagonalMap(8);
+        map = new HexagonalMap(mapSize);
         this.add(map);
         this.pack();
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -108,10 +107,10 @@ public class Game extends JFrame implements Serializable {
         dummyPlayers.put(2,new Player("Játékos 2",Color.MAGENTA, Player.Type.BOT));
         dummyPlayers.put(3,new Player("Játékos 3",Color.WHITE, Player.Type.NONE));
         Game g = new Game();
-        g.initializeGame(dummyPlayers);
+        g.initializeGame(dummyPlayers,5);
     }
 
-    private class SaveMenuItemListener implements ActionListener {
+    private static class SaveMenuItemListener implements ActionListener {
         private final Game parent;
         public SaveMenuItemListener(Game parent) {
             this.parent = parent;

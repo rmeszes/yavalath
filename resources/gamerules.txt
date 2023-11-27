@@ -1,0 +1,19 @@
+A játék célja
+A Yavalath egy hasonló játék a jobban ismert Match 4 játékhoz, mivel a célja igazából ugyanaz, vagyis
+egy játékosnak 4 korongját kell elhelyeznie a táblát egyhuzamban, viszont ebben a verzióban vannak
+csavarok.
+Játékosok száma
+A játék játszható 2-3 személy által.
+A tábla
+A tábla hatszögekből áll, minden hatszög egy mezőnek felel meg. A játék tetszőleges méretű táblákon
+játszható ebben az esetben.
+Játékmenet
+Sorban lépnek a játékosok, mindannyiuk letehet 1 korongot. Ezt a korongot akármelyik üres mezőre
+leteheti, ezután a következő következmények történhetnek:
+• A játékos úgy helyezett le korongot, hogy 3 korongja van egyhuzamban letéve, ebben az
+esetben ő kiesik a játékból és veszített. Ha már csak egy játékos maradt játékban, ő
+automatikusan nyer, a játéknak vége.
+• A játékosnak sikerült letennie 4 saját korongot egyhuzamban, ebben az esetben a játékot
+megnyerte és a játéknak vége.
+A játék vége
+A játéknak akkor van vége, ha valaki nyert, vagy ha már nincsen üres mező a táblán

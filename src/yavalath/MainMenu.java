@@ -18,19 +18,42 @@ import java.util.logging.Logger;
 
 public class MainMenu extends JFrame {
     private static final Logger logger = Logger.getLogger("MainMenu");
-    private static final PlayerTypeSelector player1TypeSelector = new PlayerTypeSelector();
-    private static final PlayerTypeSelector player2TypeSelector = new PlayerTypeSelector();
-    private static final PlayerTypeSelector player3TypeSelector = new PlayerTypeSelector();
-    private static final ColorPicker player1ColorPicker = new ColorPicker();
-    private static final ColorPicker player2ColorPicker = new ColorPicker();
-    private static final ColorPicker player3ColorPicker = new ColorPicker();
-    private static final JButton startGameButton = new JButton("Játék indítása");
+    private final PlayerTypeSelector player1TypeSelector = new PlayerTypeSelector();
+    private final PlayerTypeSelector player2TypeSelector = new PlayerTypeSelector();
+    private final PlayerTypeSelector player3TypeSelector = new PlayerTypeSelector();
+    private final ColorPicker player1ColorPicker = new ColorPicker();
+    private final ColorPicker player2ColorPicker = new ColorPicker();
+    private final ColorPicker player3ColorPicker = new ColorPicker();
+    private final JButton startGameButton = new JButton("Játék indítása");
 
-    private static final JTextField player1NameField = new JTextField("Játékos 1");
-    private static final JTextField player2NameField = new JTextField("Játékos 2");
-    private static final JTextField player3NameField = new JTextField("Játékos 3");
+    private final JTextField player1NameField = new JTextField("Játékos 1");
+    private final JTextField player2NameField = new JTextField("Játékos 2");
+    private final JTextField player3NameField = new JTextField("Játékos 3");
+    private final JComboBox<Integer> mapSizeChooser = new JComboBox<>();
 
-    static {
+
+
+    public Player.Type getPlayer1Type() {
+        return (Player.Type) player1TypeSelector.getSelectedItem();
+    }
+    public Player.Type getPlayer2Type() {
+        return (Player.Type) player2TypeSelector.getSelectedItem();
+    }
+    public Player.Type getPlayer3Type() {
+        return (Player.Type) player3TypeSelector.getSelectedItem();
+    }
+
+    public Color getPlayer1Color() {
+        return player1ColorPicker.currentColor;
+    }
+    public Color getPlayer2Color() {
+        return player2ColorPicker.currentColor;
+    }
+    public Color getPlayer3Color() {
+        return player3ColorPicker.currentColor;
+    }
+
+    private void initializeComponents() {
         TextFieldListener l = new TextFieldListener();
         player1NameField.setEnabled(false);
         player2NameField.setEnabled(false);
@@ -38,29 +61,8 @@ public class MainMenu extends JFrame {
         player1NameField.getDocument().addDocumentListener(l);
         player2NameField.getDocument().addDocumentListener(l);
         player3NameField.getDocument().addDocumentListener(l);
-    }
 
-    public static Player.Type getPlayer1Type() {
-        return (Player.Type) player1TypeSelector.getSelectedItem();
-    }
-    public static Player.Type getPlayer2Type() {
-        return (Player.Type) player2TypeSelector.getSelectedItem();
-    }
-    public static Player.Type getPlayer3Type() {
-        return (Player.Type) player3TypeSelector.getSelectedItem();
-    }
 
-    public static Color getPlayer1Color() {
-        return player1ColorPicker.currentColor;
-    }
-    public static Color getPlayer2Color() {
-        return player2ColorPicker.currentColor;
-    }
-    public static Color getPlayer3Color() {
-        return player3ColorPicker.currentColor;
-    }
-
-    private void initializeComponents() {
         JPanel newGamePanel = new JPanel();
         newGamePanel.setLayout(new GridBagLayout());
         newGamePanel.setBorder(new EmptyBorder(10,10,10,10));
@@ -150,27 +152,51 @@ public class MainMenu extends JFrame {
         this.add(BorderLayout.NORTH, newGamePanel);
         this.add(BorderLayout.CENTER, new JSeparator());
 
-        JPanel loadGamePanel = new JPanel();
-        loadGamePanel.setLayout(new GridBagLayout());
+        JPanel mainMenuLowerPanel = new JPanel();
+        mainMenuLowerPanel.setLayout(new GridBagLayout());
         GridBagConstraints loadbgc = new GridBagConstraints();
         loadbgc.weightx = 0.5;
-        loadGamePanel.add(new JLabel("Vagy tölts be egy játékot"),loadbgc);
+        mainMenuLowerPanel.add(new JLabel("Pályaméret"),loadbgc);
+        loadbgc.gridx = 1;
+        for(int i = 4; i <= 8; i++) {
+            mapSizeChooser.addItem(i);
+        }
+        mainMenuLowerPanel.add(mapSizeChooser,loadbgc);
+        loadbgc.gridx = 0;
+        loadbgc.gridwidth = 2;
+        loadbgc.gridy = 1;
+        mainMenuLowerPanel.add(new JLabel("Vagy tölts be egy játékot"),loadbgc);
         JButton loadGameButton = new JButton("Fájl kiválasztása..");
         loadGameButton.setActionCommand("choose file");
         loadGameButton.addActionListener(new ButtonListener());
-        loadbgc.gridy = 1;
-        loadGamePanel.add(loadGameButton,loadbgc);
+        loadbgc.gridy = 2;
+        mainMenuLowerPanel.add(loadGameButton,loadbgc);
 
-        this.add(loadGamePanel,BorderLayout.SOUTH);
+        this.add(mainMenuLowerPanel,BorderLayout.SOUTH);
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileMenu = new JMenu("Fájl");
+        JMenuItem exit = new JMenuItem("Kilépés");
+        fileMenu.add(exit);
+        menuBar.add(fileMenu);
+        JMenu help = new JMenu("Súgó");
+        JMenuItem gameRules = new JMenuItem("Játék szabályok");
+        help.add(gameRules);
+        menuBar.add(help);
+        this.setJMenuBar(menuBar);
+
+        exit.addActionListener(e -> System.exit(0));
+
+        gameRules.addActionListener(e -> new GameRulesFrame());
     }
     public MainMenu() {
         super("Yavalath - Főmenü");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(350,525);
+        setSize(350,550);
         setResizable(false);
         initializeComponents();
     }
-    public static class PlayerTypeSelector extends JComboBox<Player.Type> {
+    public class PlayerTypeSelector extends JComboBox<Player.Type> {
         public PlayerTypeSelector() {
             for(Player.Type type : Player.getAllTypes()) {
                 addItem(type);
@@ -178,7 +204,7 @@ public class MainMenu extends JFrame {
             setActionCommand("player type changed");
             addActionListener(new OnChangeListener());
         }
-        private static class OnChangeListener implements ActionListener {
+        private class OnChangeListener implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 startGameButton.setEnabled(e.getActionCommand().equals("player type changed") && canGameStart());
@@ -194,7 +220,7 @@ public class MainMenu extends JFrame {
         }
     }
 
-    public static class ColorPicker extends JButton {
+    public class ColorPicker extends JButton {
         private Color currentColor;
         public ColorPicker() {
             currentColor = Color.WHITE;
@@ -219,7 +245,7 @@ public class MainMenu extends JFrame {
         }
     }
 
-    public static class ButtonListener implements ActionListener {
+    public class ButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             if(actionEvent.getActionCommand().equals("start game") && canGameStart()) {
@@ -228,7 +254,8 @@ public class MainMenu extends JFrame {
                 players.put(2,new Player(player2NameField.getText(),getPlayer2Color(),getPlayer2Type()));
                 players.put(3,new Player(player3NameField.getText(),getPlayer3Color(),getPlayer3Type()));
                 Game g = new Game();
-                g.initializeGame(players);
+                assert(mapSizeChooser.getSelectedItem() != null);
+                g.initializeGame(players, (Integer) mapSizeChooser.getSelectedItem());
                 SwingUtilities.getWindowAncestor((Component) actionEvent.getSource()).dispose();
             } else if (actionEvent.getActionCommand().equals("choose file")) {
                 JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
@@ -252,7 +279,7 @@ public class MainMenu extends JFrame {
         }
     }
 
-    public static class TextFieldListener implements DocumentListener {
+    public class TextFieldListener implements DocumentListener {
         private void onUpdate() {
             startGameButton.setEnabled(canGameStart());
         }
@@ -272,7 +299,7 @@ public class MainMenu extends JFrame {
             onUpdate();
         }
     }
-    private static boolean validateThirdPlayer() {
+    private boolean validateThirdPlayer() {
         if(player3NameField.getText().isEmpty()) {
             return false;
         }
@@ -286,7 +313,7 @@ public class MainMenu extends JFrame {
         return !player1NameField.getText().equals(player3NameField.getText()) && !player2NameField.getText().equals(player3NameField.getText());
     }
 
-    private static boolean canGameStart() {
+    private boolean canGameStart() {
         if(player1NameField.getText().equals(player2NameField.getText())) { //egyező nevek
             return false;
         }
@@ -311,11 +338,5 @@ public class MainMenu extends JFrame {
             }
         }
         return true;
-    }
-
-    public static void main(String[] args) {
-        MainMenu m = new MainMenu();
-        m.setLocationRelativeTo(null);
-        m.setVisible(true);
     }
 }
