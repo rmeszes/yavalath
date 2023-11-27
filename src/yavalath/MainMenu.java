@@ -158,7 +158,7 @@ public class MainMenu extends JFrame {
         loadbgc.weightx = 0.5;
         mainMenuLowerPanel.add(new JLabel("Pályaméret"),loadbgc);
         loadbgc.gridx = 1;
-        for(int i = 4; i <= 8; i++) {
+        for(int i = 4; i <= 20; i++) {
             mapSizeChooser.addItem(i);
         }
         mainMenuLowerPanel.add(mapSizeChooser,loadbgc);

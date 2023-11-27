@@ -10,9 +10,6 @@ import java.util.logging.Logger;
 
 public class HexagonalMap extends JPanel implements Serializable {
     private static final Logger logger = Logger.getLogger("HexagonalMap");
-    private static final int HEX_RADIUS = 50;
-    private static final int HEX_HEIGHT = (int) (Math.sqrt(3) * HEX_RADIUS);
-    private static final int HEX_WIDTH = 2 * HEX_RADIUS;
     private static final int GRID_X_OFFSET = 50;
     private static final int GRID_Y_OFFSET = 50;
     private final ArrayList<Hexagon> hexagons;
@@ -29,15 +26,18 @@ public class HexagonalMap extends JPanel implements Serializable {
     }
     public HexagonalMap(int size, Game game) {
         this.game = game;
+        int hexRadius = 200 / size;
+        int hexHeight = (int) (Math.sqrt(3) * hexRadius);
+        int hexWidth = 2 * hexRadius;
         hexagons = new ArrayList<>(size*size);
 
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
-                int x = GRID_X_OFFSET + col * HEX_WIDTH + (row % 2) * HEX_RADIUS;
-                int y = GRID_Y_OFFSET + row * HEX_HEIGHT;
-                Dimension d = new Dimension(x+HEX_WIDTH+GRID_X_OFFSET/4,y+HEX_HEIGHT+GRID_Y_OFFSET/4);
+                int x = GRID_X_OFFSET + col * hexWidth + (row % 2) * hexRadius;
+                int y = GRID_Y_OFFSET + row * hexHeight;
+                Dimension d = new Dimension(x+ hexWidth +GRID_X_OFFSET/4,y+ hexHeight +GRID_Y_OFFSET/4);
                 setPreferredSize(d);
-                Hexagon hexagon = new Hexagon(x, y, HEX_RADIUS,30,col,row);
+                Hexagon hexagon = new Hexagon(x, y, hexRadius,30,col,row);
                 hexagons.add(hexagon);
             }
         }

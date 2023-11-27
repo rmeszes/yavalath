@@ -11,7 +11,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -21,7 +20,6 @@ public class Game extends JFrame implements Serializable {
     private Player p1;
     private Player p2;
     private Player p3;
-    private boolean p3inGame;
     private Player activePlayer;
     private final JLabel currentPlayerLabel = new JLabel();
     private ColorCube currentPlayerColor;
@@ -54,7 +52,7 @@ public class Game extends JFrame implements Serializable {
         p1 = players.get(1);
         p2 = players.get(2);
         p3 = players.get(3);
-        p3inGame = p3.getType() != Player.Type.NONE;
+        boolean p3inGame = p3.getType() != Player.Type.NONE;
         if(p3inGame) {
             activePlayers = 3;
         } else {
@@ -103,15 +101,6 @@ public class Game extends JFrame implements Serializable {
         return activePlayer;
     }
     public void nextPlayer() {
-        /*if(activePlayer == p1) {
-            activePlayer = p2;
-        } else if(activePlayer == p2 && p3inGame) {
-            activePlayer = p3;
-        } else if(activePlayer == p2) {
-            activePlayer = p1;
-        } else if(activePlayer == p3) {
-            activePlayer = p1;
-        }*/
         ArrayList<Player> playersInGame = new ArrayList<>(3);
         if(p1.isInGame()) playersInGame.add(p1);
         if(p2.isInGame()) playersInGame.add(p2);
@@ -143,7 +132,7 @@ public class Game extends JFrame implements Serializable {
         dummyPlayers.put(2,new Player("Játékos 2",Color.MAGENTA, Player.Type.BOT));
         dummyPlayers.put(3,new Player("Játékos 3",Color.WHITE, Player.Type.NONE));
         Game g = new Game();
-        g.initializeGame(dummyPlayers,5);
+        g.initializeGame(dummyPlayers,20);
     }
 
     private static class SaveMenuItemListener implements ActionListener {
