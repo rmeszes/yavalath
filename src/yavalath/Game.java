@@ -135,22 +135,16 @@ public class Game extends JFrame implements Serializable {
         g.initializeGame(dummyPlayers,20);
     }
 
-    private static class SaveMenuItemListener implements ActionListener {
-        private final Game parent;
-        public SaveMenuItemListener(Game parent) {
-            this.parent = parent;
-        }
-
-
+    private record SaveMenuItemListener(Game parent) implements ActionListener {
         @Override
-        public void actionPerformed(ActionEvent ae) {
-            try(FileOutputStream fileStream = new FileOutputStream("save.ser");ObjectOutputStream stream = new ObjectOutputStream(fileStream)) {
-                stream.writeObject(parent);
-                logger.info("Saved to file succesfully!");
-                System.exit(0);
-            } catch (IOException e) {
-                logger.warning(e.getMessage());
+            public void actionPerformed(ActionEvent ae) {
+                try (FileOutputStream fileStream = new FileOutputStream("save.ser"); ObjectOutputStream stream = new ObjectOutputStream(fileStream)) {
+                    stream.writeObject(parent);
+                    logger.info("Saved to file succesfully!");
+                    System.exit(0);
+                } catch (IOException e) {
+                    logger.warning(e.getMessage());
+                }
             }
         }
-    }
 }

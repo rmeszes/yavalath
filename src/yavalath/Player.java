@@ -6,8 +6,8 @@ import java.util.EnumSet;
 import java.util.Set;
 
 public class Player implements Serializable {
-    private String name;
-    private Color color;
+    private final String name;
+    private final Color color;
     private boolean inGame;
     public enum Type {
         NONE("Nem játszik"),
@@ -23,7 +23,7 @@ public class Player implements Serializable {
             return value;
         }
     }
-    private Type type;
+    private final Type type;
     public Player(String name, Color color, Type type) {
         this.name = name;
         this.color = color;
@@ -35,24 +35,12 @@ public class Player implements Serializable {
         return color;
     }
 
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public Type getType() {
         return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
     }
     public static Set<Type> getAllTypes() {
         return EnumSet.allOf(Type.class);

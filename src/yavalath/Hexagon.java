@@ -12,8 +12,8 @@ public class Hexagon extends JComponent implements Serializable {
     private final int size;
     private final int rotationAngle;
     private int sameColorInRow;
-    private int q; // axial coordinate
-    private int r; // axial coordinate
+    private final int q; // axial coordinate
+    private final int r; // axial coordinate
 
     public Player getTakenBy() {
         return takenBy;
@@ -26,9 +26,6 @@ public class Hexagon extends JComponent implements Serializable {
     }
     public void setSameColorInRow(int i) {
         sameColorInRow = i;
-    }
-    public void addColorInRow() {
-        sameColorInRow++;
     }
 
     public Hexagon(int centerX, int centerY, int size, int rotationAngle, int q, int r) {
@@ -67,7 +64,7 @@ public class Hexagon extends JComponent implements Serializable {
             g2d.setColor(takenBy.getColor());
         }
         g2d.fill(hexagon);
-        g2d.setColor(Color.BLACK); // Set your desired border color
+        g2d.setColor(Color.BLACK);
         g2d.draw(hexagon);
     }
 
