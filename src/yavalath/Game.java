@@ -72,6 +72,7 @@ public class Game extends JFrame implements Serializable {
     }
     public Game() {
         super("Yavalath");
+        setResizable(false);
     }
 
     public Player getActivePlayer() {
