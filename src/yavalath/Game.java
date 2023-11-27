@@ -9,7 +9,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -24,6 +26,24 @@ public class Game extends JFrame implements Serializable {
     private final JLabel currentPlayerLabel = new JLabel();
     private ColorCube currentPlayerColor;
     private HexagonalMap map;
+    private int activePlayers;
+
+    public Player getP1() {
+        return p1;
+    }
+    public Player getP2() {
+        return p2;
+    }
+    public Player getP3() {
+        return p3;
+    }
+
+    public int getActivePlayers() {
+        return activePlayers;
+    }
+    public void takeOutPlayer() {
+        activePlayers--;
+    }
 
     public void reInitialize() {
         saveMenuItem.addActionListener(new SaveMenuItemListener(this));
@@ -35,6 +55,11 @@ public class Game extends JFrame implements Serializable {
         p2 = players.get(2);
         p3 = players.get(3);
         p3inGame = p3.getType() != Player.Type.NONE;
+        if(p3inGame) {
+            activePlayers = 3;
+        } else {
+            activePlayers = 2;
+        }
         activePlayer = p1;
         currentPlayerColor = new ColorCube(new Dimension(30, 30), p1.getColor());
         currentPlayerLabel.setFont(new Font("Sans Serif", Font.ITALIC, 30));
@@ -61,7 +86,7 @@ public class Game extends JFrame implements Serializable {
 
 
         this.add(currentPlayerPanel,BorderLayout.NORTH);
-        map = new HexagonalMap(mapSize);
+        map = new HexagonalMap(mapSize,this);
         this.add(map);
         this.pack();
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -78,7 +103,7 @@ public class Game extends JFrame implements Serializable {
         return activePlayer;
     }
     public void nextPlayer() {
-        if(activePlayer == p1) {
+        /*if(activePlayer == p1) {
             activePlayer = p2;
         } else if(activePlayer == p2 && p3inGame) {
             activePlayer = p3;
@@ -86,7 +111,19 @@ public class Game extends JFrame implements Serializable {
             activePlayer = p1;
         } else if(activePlayer == p3) {
             activePlayer = p1;
+        }*/
+        ArrayList<Player> playersInGame = new ArrayList<>(3);
+        if(p1.isInGame()) playersInGame.add(p1);
+        if(p2.isInGame()) playersInGame.add(p2);
+        if(p3.isInGame()) playersInGame.add(p3);
+
+        int active = playersInGame.indexOf(activePlayer);
+        if(active != playersInGame.size()-1) {
+            activePlayer = playersInGame.get(active +1);
+        } else {
+            activePlayer = playersInGame.get(0);
         }
+
         currentPlayerLabel.setText(activePlayer.getName());
         currentPlayerColor.setColor(activePlayer.getColor());
     }
@@ -100,8 +137,7 @@ public class Game extends JFrame implements Serializable {
             setBackground(c);
         }
     }
-    //Csak könnyebb tesztelésért
-    public static void main(String[] args) {
+    public static void main(String[] args) { // csak tesztelésre
         Map<Integer, Player> dummyPlayers = HashMap.newHashMap(3);
         dummyPlayers.put(1,new Player("Játékos 1",Color.RED, Player.Type.HUMAN));
         dummyPlayers.put(2,new Player("Játékos 2",Color.MAGENTA, Player.Type.BOT));

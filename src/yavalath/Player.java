@@ -8,6 +8,7 @@ import java.util.Set;
 public class Player implements Serializable {
     private String name;
     private Color color;
+    private boolean inGame;
     public enum Type {
         NONE("Nem játszik"),
         HUMAN("Ember"),
@@ -27,6 +28,7 @@ public class Player implements Serializable {
         this.name = name;
         this.color = color;
         this.type = type;
+        inGame = type != Type.NONE;
     }
 
     public Color getColor() {
@@ -54,6 +56,14 @@ public class Player implements Serializable {
     }
     public static Set<Type> getAllTypes() {
         return EnumSet.allOf(Type.class);
+    }
+
+    public boolean isInGame() {
+        return inGame;
+    }
+
+    public void setInGame(boolean inGame) {
+        this.inGame = inGame;
     }
 
     public String toString() {

@@ -6,7 +6,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 public class HexagonalMap extends JPanel implements Serializable {
@@ -16,7 +15,8 @@ public class HexagonalMap extends JPanel implements Serializable {
     private static final int HEX_WIDTH = 2 * HEX_RADIUS;
     private static final int GRID_X_OFFSET = 50;
     private static final int GRID_Y_OFFSET = 50;
-    private final List<Hexagon> hexagons;
+    private final ArrayList<Hexagon> hexagons;
+    private final Game game;
 
     public void reInitialize() {
         addMouseListener(new MouseAdapter() {
@@ -27,8 +27,9 @@ public class HexagonalMap extends JPanel implements Serializable {
         });
 
     }
-    public HexagonalMap(int size) {
-        hexagons = new ArrayList<>();
+    public HexagonalMap(int size, Game game) {
+        this.game = game;
+        hexagons = new ArrayList<>(size*size);
 
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
@@ -52,12 +53,17 @@ public class HexagonalMap extends JPanel implements Serializable {
         for (Hexagon hexagon : hexagons) {
             if (hexagon.contains(mouseX, mouseY)) {
                 // Hexagon clicked
-                logger.info(() ->"Hexagon clicked at (" + hexagon.getQ() + ", " + hexagon.getR() + ")");
                 if(hexagon.getTakenBy() == null) {
-                    hexagon.setTakenBy(((Game)SwingUtilities.getWindowAncestor(this)).getActivePlayer());
+                    hexagon.setTakenBy(game.getActivePlayer());
                     this.repaint();
-                    ((Game)SwingUtilities.getWindowAncestor(this)).nextPlayer();
+                    switch(gameStateCheck()) {
+                        case NORMAL -> game.nextPlayer();
+                        case PLAYERWON -> System.exit(2);
+                        case GAMEOVER -> System.exit(3);
+                    }
                 }
+                logger.info(() ->"Hexagon clicked at (" + hexagon.getQ() + ", " + hexagon.getR() + ")\n" +
+                        "count: " + hexagon.getSameColorInRow());
                 break;
             }
         }
@@ -82,7 +88,7 @@ public class HexagonalMap extends JPanel implements Serializable {
                 qDiff == -1 && rDiff == 1;
     }
 
-    private static boolean neigbhoursOfEven(int qDiff,int rDiff){
+    private static boolean neighboursOfEven(int qDiff, int rDiff){
         return qDiff == -1 && rDiff == 0 ||
                 qDiff == 0 && rDiff == -1 ||
                 qDiff == 1 && rDiff == -1 ||
@@ -103,8 +109,56 @@ public class HexagonalMap extends JPanel implements Serializable {
         if(r1 % 2 == 1) {
             return neighborsOfOdd(qDiff,rDiff);
         } else {
-            return neigbhoursOfEven(qDiff,rDiff);
+            return neighboursOfEven(qDiff,rDiff);
         }
     }
 
+    private GameState gameStateCheck() {
+        Player lastPlayer = game.getActivePlayer();
+        int maxCount = 0;
+        for(Hexagon base : hexagons) {
+            if(base.getTakenBy() == lastPlayer) {
+                maxCount = checkNeighbors(base,maxCount);
+            }
+        }
+        return nextState(lastPlayer,maxCount);
+    }
+    private boolean isALowerNeighbor(Hexagon upper, Hexagon lower) {
+        return areNeighbors(upper, lower) && upper.getR() <= lower.getR() &&upper.getQ() <= lower.getQ();
+    }
+    private GameState nextState(Player lastPlayer, int maxCount) {
+        if(maxCount >= 4) {
+            return GameState.PLAYERWON;
+        } else if(maxCount == 3) {
+            lastPlayer.setInGame(false);
+            game.takeOutPlayer();
+            if(game.getActivePlayers() == 1) {
+                return GameState.GAMEOVER;
+            } else {
+                return GameState.NORMAL;
+            }
+        } else {
+            return GameState.NORMAL;
+        }
+    }
+
+    private int checkNeighbors(Hexagon base, int maxCount) {
+        int found = 0;
+        for (Hexagon rest : hexagons) {
+            if (isALowerNeighbor(base, rest) && base.getTakenBy() != null && (base.getTakenBy() == rest.getTakenBy()) && base.getSameColorInRow() >= rest.getSameColorInRow()) {
+                found++;
+                rest.setSameColorInRow(base.getSameColorInRow());
+                rest.addColorInRow();
+                int count = rest.getSameColorInRow();
+                if (count > maxCount) maxCount = count;
+            }
+            if (found >= 6) break; //tuti minden szomszéd meglett
+        }
+        return maxCount;
+    }
+    private enum GameState {
+        PLAYERWON,
+        NORMAL,
+        GAMEOVER;
+    }
 }
