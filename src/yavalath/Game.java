@@ -25,6 +25,11 @@ public class Game extends JFrame implements Serializable {
     private ColorCube currentPlayerColor;
     private HexagonalMap map;
     private int activePlayers;
+    private boolean isBotCurrentlyActive;
+
+    public boolean isBotCurrentlyActive() {
+        return isBotCurrentlyActive;
+    }
 
     public Player getP1() {
         return p1;
@@ -51,10 +56,11 @@ public class Game extends JFrame implements Serializable {
         map.reInitialize();
     }
 
-    public void initializeGame(Map<Integer,Player> players,int mapSize) {
+    private void initializeGame(Map<Integer,Player> players,int mapSize) {
         p1 = players.get(1);
         p2 = players.get(2);
         p3 = players.get(3);
+        isBotCurrentlyActive = p1.getType() == Player.Type.BOT;
         boolean p3inGame = p3.getType() != Player.Type.NONE;
         if(p3inGame) {
             activePlayers = 3;
@@ -64,7 +70,6 @@ public class Game extends JFrame implements Serializable {
         activePlayer = p1;
         currentPlayerColor = new ColorCube(new Dimension(30, 30), p1.getColor());
         currentPlayerLabel.setFont(new Font("Sans Serif", Font.ITALIC, 30));
-
 
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("Fájl");
@@ -76,11 +81,18 @@ public class Game extends JFrame implements Serializable {
         saveMenuItem.addActionListener(new SaveMenuItemListener(this));
 
         JPanel currentPlayerPanel = new JPanel();
-        currentPlayerPanel.setBorder(new EmptyBorder(60,10,10,60));
+        currentPlayerPanel.setBorder(new EmptyBorder(30,10,10,50));
         JLabel l1 = new JLabel("Következő lépés:");
         l1.setFont(new Font("Sans Serif", Font.PLAIN, 30));
         currentPlayerPanel.add(l1);
-        currentPlayerLabel.setText(p1.getName());
+        if(isBotCurrentlyActive) {
+            currentPlayerLabel.setText(p1.getName() + " (Bot)");
+            Timer timer = new Timer(1000, e -> map.botStep(activePlayer));
+            timer.setRepeats(false);
+            timer.start();
+        } else {
+            currentPlayerLabel.setText(p1.getName());
+        }
         currentPlayerPanel.add(currentPlayerLabel);
         currentPlayerPanel.add(currentPlayerColor);
 
@@ -94,10 +106,12 @@ public class Game extends JFrame implements Serializable {
         this.setLocationRelativeTo(null);
 
         this.setVisible(true);
+
     }
-    public Game() {
+    public Game(Map<Integer,Player> players,int mapSize) {
         super("Yavalath");
         setResizable(false);
+        initializeGame(players,mapSize);
     }
 
     public Player getActivePlayer() {
@@ -116,8 +130,21 @@ public class Game extends JFrame implements Serializable {
             activePlayer = playersInGame.get(0);
         }
 
-        currentPlayerLabel.setText(activePlayer.getName());
+        isBotCurrentlyActive = activePlayer.getType() == Player.Type.BOT;
+
         currentPlayerColor.setColor(activePlayer.getColor());
+        if(isBotCurrentlyActive) {
+            currentPlayerLabel.setText(activePlayer.getName() + " (Bot)");
+        } else {
+            currentPlayerLabel.setText(activePlayer.getName());
+        }
+        pack();
+
+        if(isBotCurrentlyActive && !map.isGameOver()) {
+            Timer timer = new Timer(1000, e -> map.botStep(activePlayer));
+            timer.setRepeats(false);
+            timer.start();
+        }
     }
 
     private static class ColorCube extends JButton {
@@ -134,8 +161,7 @@ public class Game extends JFrame implements Serializable {
         dummyPlayers.put(1,new Player("Játékos 1",Color.RED, Player.Type.HUMAN));
         dummyPlayers.put(2,new Player("Játékos 2",Color.MAGENTA, Player.Type.BOT));
         dummyPlayers.put(3,new Player("Játékos 3",Color.WHITE, Player.Type.NONE));
-        Game g = new Game();
-        g.initializeGame(dummyPlayers,20);
+        new Game(dummyPlayers,20);
     }
 
     private record SaveMenuItemListener(Game parent) implements ActionListener {

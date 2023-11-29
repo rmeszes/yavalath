@@ -6,14 +6,22 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.logging.Logger;
 
 public class HexagonalMap extends JPanel implements Serializable {
     private static final Logger logger = Logger.getLogger("HexagonalMap");
+    private static final Random rnd = new Random();
     private static final int GRID_X_OFFSET = 50;
     private static final int GRID_Y_OFFSET = 50;
     private final ArrayList<Hexagon> hexagons;
     private final Game game;
+    private int freeFields;
+    private boolean isGameOver;
+
+    public boolean isGameOver() {
+        return isGameOver;
+    }
 
     public void reInitialize() {
         addMouseListener(new MouseAdapter() {
@@ -30,7 +38,8 @@ public class HexagonalMap extends JPanel implements Serializable {
         int hexHeight = (int) (Math.sqrt(3) * hexRadius);
         int hexWidth = 2 * hexRadius;
         hexagons = new ArrayList<>(size*size);
-
+        freeFields = size*size;
+        isGameOver = false;
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
                 int x = GRID_X_OFFSET + col * hexWidth + (row % 2) * hexRadius;
@@ -50,48 +59,71 @@ public class HexagonalMap extends JPanel implements Serializable {
     }
 
     private void handleMouseClick(int mouseX, int mouseY) {
-        for (Hexagon hexagon : hexagons) {
-            if (hexagon.contains(mouseX, mouseY)) {
-                // Hexagon clicked
-                if(hexagon.getTakenBy() == null) {
-                    hexagon.setTakenBy(game.getActivePlayer());
-                    this.repaint();
-                    switch(gameStateCheck()) {
-                        case NORMAL -> game.nextPlayer();
-                        case PLAYERWON -> playerWon();
-                        case GAMEOVER -> gameOver();
-                        case PLAYERTAKEOUT -> {/*no next player should be called here*/}
-                    }
+        if(!game.isBotCurrentlyActive()) {
+            for (Hexagon hexagon : hexagons) {
+                if (hexagon.contains(mouseX, mouseY)) {
+                    // Hexagon clicked
+                    tryToTakeField(hexagon,game.getActivePlayer());
+                    logger.info(() -> "Hexagon clicked at (" + hexagon.getQ() + ", " + hexagon.getR() + ")\n" +
+                            "count: " + hexagon.getSameColorInRow());
+                    break;
                 }
-                logger.info(() ->"Hexagon clicked at (" + hexagon.getQ() + ", " + hexagon.getR() + ")\n" +
-                        "count: " + hexagon.getSameColorInRow());
-                break;
             }
         }
     }
 
+    private void noMoreFreeFields() {
+        showDialog("Nincs több szabad mező");
+    }
+    public void botStep(Player bot) {
+        boolean hasStepped = false;
+        int size = hexagons.size();
+        while(!hasStepped) {
+            Hexagon toTry = hexagons.get(rnd.nextInt(0,size));
+            hasStepped = tryToTakeField(toTry,bot);
+        }
+
+    }
+    private boolean tryToTakeField(Hexagon h, Player p) {
+        if(h.getTakenBy() == null) {
+            h.setTakenBy(p);
+            freeFields--;
+            this.repaint();
+            switch (gameStateCheck()) {
+                case NORMAL -> game.nextPlayer();
+                case PLAYERWON -> playerWon();
+                case GAMEOVER -> gameOver();
+                case PLAYERTAKEOUT -> {/*no next player should be called here*/}
+                case NO_MORE_FREE_FIELDS -> noMoreFreeFields();
+            }
+            return true;
+        }
+        return false;
+    }
+
     private void gameOver() {
-        if(game.getP1().isInGame()) showWinDialog(game.getP1());
-        if(game.getP2().isInGame()) showWinDialog(game.getP2());
-        if(game.getP3().isInGame()) showWinDialog(game.getP3());
+        String won = " nyert!";
+        if(game.getP1().isInGame()) showDialog(game.getP1().getName() + won);
+        if(game.getP2().isInGame()) showDialog(game.getP2().getName() + won);
+        if(game.getP3().isInGame()) showDialog(game.getP3().getName() + won);
     }
 
     private void playerWon() {
-        showWinDialog(game.getActivePlayer());
+        showDialog(game.getActivePlayer().getName() + " nyert!");
     }
 
-    private void showWinDialog(Player winner) {
+    private void showDialog(String msg) {
+        isGameOver = true;
         game.setEnabled(false);
-        JFrame winDialog = new JFrame();
-        String msg = winner.getName() + " nyert!";
+        JFrame dialog = new JFrame();
         JLabel label = new JLabel(msg);
         label.setVerticalAlignment(SwingConstants.CENTER);
         label.setVerticalTextPosition(SwingConstants.CENTER);
-        winDialog.add(label, BorderLayout.CENTER);
-        winDialog.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        winDialog.setSize(200,100);
-        winDialog.setLocationRelativeTo(null);
-        winDialog.setVisible(true);
+        dialog.add(label, BorderLayout.CENTER);
+        dialog.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        dialog.setSize(200,100);
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
     }
 
     @Override
@@ -166,6 +198,8 @@ public class HexagonalMap extends JPanel implements Serializable {
             } else {
                 return GameState.PLAYERTAKEOUT;
             }
+        } else if (freeFields == 0){
+            return GameState.NO_MORE_FREE_FIELDS;
         } else {
             return GameState.NORMAL;
         }
@@ -195,6 +229,7 @@ public class HexagonalMap extends JPanel implements Serializable {
         PLAYERWON,
         NORMAL,
         GAMEOVER,
-        PLAYERTAKEOUT
+        PLAYERTAKEOUT,
+        NO_MORE_FREE_FIELDS
     }
 }
