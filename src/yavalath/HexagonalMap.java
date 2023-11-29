@@ -60,6 +60,7 @@ public class HexagonalMap extends JPanel implements Serializable {
                         case NORMAL -> game.nextPlayer();
                         case PLAYERWON -> playerWon();
                         case GAMEOVER -> gameOver();
+                        case PLAYERTAKEOUT -> {/*no next player should be called here*/}
                     }
                 }
                 logger.info(() ->"Hexagon clicked at (" + hexagon.getQ() + ", " + hexagon.getR() + ")\n" +
@@ -148,23 +149,22 @@ public class HexagonalMap extends JPanel implements Serializable {
                 maxCount = checkNeighbors(base,maxCount);
             }
         }
-        return nextState(lastPlayer,maxCount);
+        return nextState(maxCount);
     }
     private boolean isALowerNeighbor(Hexagon upper, Hexagon lower) {
         if(areNeighbors(upper, lower) && (upper.getR() <= lower.getR() && upper.getQ() <= lower.getQ())){
             return true;
         } else return upper.getR() % 2 == 1 && upper.getQ() - lower.getQ() == -1 && upper.getR() - lower.getR() == 1;
     }
-    private GameState nextState(Player lastPlayer, int maxCount) {
+    private GameState nextState(int maxCount) {
         if(maxCount >= 4) {
             return GameState.PLAYERWON;
         } else if(maxCount == 3) {
-            lastPlayer.setInGame(false);
             game.takeOutPlayer();
             if(game.getActivePlayers() == 1) {
                 return GameState.GAMEOVER;
             } else {
-                return GameState.NORMAL;
+                return GameState.PLAYERTAKEOUT;
             }
         } else {
             return GameState.NORMAL;
@@ -194,6 +194,7 @@ public class HexagonalMap extends JPanel implements Serializable {
     private enum GameState {
         PLAYERWON,
         NORMAL,
-        GAMEOVER
+        GAMEOVER,
+        PLAYERTAKEOUT
     }
 }

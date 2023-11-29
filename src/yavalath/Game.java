@@ -40,6 +40,9 @@ public class Game extends JFrame implements Serializable {
         return activePlayers;
     }
     public void takeOutPlayer() {
+        Player toTakeOut = activePlayer;
+        nextPlayer();
+        toTakeOut.setInGame(false);
         activePlayers--;
     }
 
@@ -105,7 +108,6 @@ public class Game extends JFrame implements Serializable {
         if(p1.isInGame()) playersInGame.add(p1);
         if(p2.isInGame()) playersInGame.add(p2);
         if(p3.isInGame()) playersInGame.add(p3);
-        //TODO: ha kiesik egy player akkor az első playerre ugrik
 
         int active = playersInGame.indexOf(activePlayer);
         if(active != playersInGame.size()-1) {
