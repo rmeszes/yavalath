@@ -254,7 +254,10 @@ public class MainMenu extends JFrame {
                 players.put(2,new Player(player2NameField.getText(),getPlayer2Color(),getPlayer2Type()));
                 players.put(3,new Player(player3NameField.getText(),getPlayer3Color(),getPlayer3Type()));
                 assert(mapSizeChooser.getSelectedItem() != null);
-                new Game(players, (Integer) mapSizeChooser.getSelectedItem());
+                SwingUtilities.invokeLater(() -> {
+                    Game g = new Game(players, (Integer) mapSizeChooser.getSelectedItem());
+                    g.setVisible(true);
+                });
                 SwingUtilities.getWindowAncestor((Component) actionEvent.getSource()).dispose();
             } else if (actionEvent.getActionCommand().equals("choose file")) {
                 JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));

@@ -23,7 +23,7 @@ public class Game extends JFrame implements Serializable {
     private Player activePlayer;
     private final JLabel currentPlayerLabel = new JLabel();
     private ColorCube currentPlayerColor;
-    private HexagonalMap map;
+    protected HexagonalMap map;
     private int activePlayers;
     private boolean isBotCurrentlyActive;
 
@@ -105,7 +105,7 @@ public class Game extends JFrame implements Serializable {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
 
-        this.setVisible(true);
+
 
     }
     public Game(Map<Integer,Player> players,int mapSize) {
@@ -161,7 +161,10 @@ public class Game extends JFrame implements Serializable {
         dummyPlayers.put(1,new Player("Játékos 1",Color.RED, Player.Type.HUMAN));
         dummyPlayers.put(2,new Player("Játékos 2",Color.MAGENTA, Player.Type.BOT));
         dummyPlayers.put(3,new Player("Játékos 3",Color.WHITE, Player.Type.NONE));
-        new Game(dummyPlayers,20);
+        SwingUtilities.invokeLater(()-> {
+            Game g = new Game(dummyPlayers,20);
+            g.setVisible(true);
+        });
     }
 
     private record SaveMenuItemListener(Game parent) implements ActionListener {

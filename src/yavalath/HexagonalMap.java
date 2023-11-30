@@ -14,9 +14,9 @@ public class HexagonalMap extends JPanel implements Serializable {
     private static final Random rnd = new Random();
     private static final int GRID_X_OFFSET = 50;
     private static final int GRID_Y_OFFSET = 50;
-    private final ArrayList<Hexagon> hexagons;
+    protected final ArrayList<Hexagon> hexagons;
     private final Game game;
-    private int freeFields;
+    protected int freeFields;
     private boolean isGameOver;
 
     public boolean isGameOver() {
@@ -84,7 +84,7 @@ public class HexagonalMap extends JPanel implements Serializable {
         }
 
     }
-    private boolean tryToTakeField(Hexagon h, Player p) {
+    protected boolean tryToTakeField(Hexagon h, Player p) {
         if(h.getTakenBy() == null) {
             h.setTakenBy(p);
             freeFields--;
@@ -136,7 +136,7 @@ public class HexagonalMap extends JPanel implements Serializable {
         }
     }
 
-    private static boolean neighborsOfOdd(int qDiff, int rDiff) {
+    protected static boolean neighborsOfOdd(int qDiff, int rDiff) {
         return qDiff == -1 && rDiff == 0 ||
                 qDiff == -1 && rDiff == -1 ||
                 qDiff == 0 && rDiff == -1 ||
@@ -145,7 +145,7 @@ public class HexagonalMap extends JPanel implements Serializable {
                 qDiff == -1 && rDiff == 1;
     }
 
-    private static boolean neighboursOfEven(int qDiff, int rDiff){
+    protected static boolean neighboursOfEven(int qDiff, int rDiff){
         return qDiff == -1 && rDiff == 0 ||
                 qDiff == 0 && rDiff == -1 ||
                 qDiff == 1 && rDiff == -1 ||
@@ -154,7 +154,7 @@ public class HexagonalMap extends JPanel implements Serializable {
                 qDiff == 1 && rDiff == 1;
     }
 
-    private static boolean areNeighbors(Hexagon hex1, Hexagon hex2) {
+    protected static boolean areNeighbors(Hexagon hex1, Hexagon hex2) {
         int q1 = hex1.getQ();
         int r1 = hex1.getR();
         int q2 = hex2.getQ();

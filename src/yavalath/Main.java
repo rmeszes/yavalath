@@ -6,6 +6,8 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
+import javax.swing.*;
+
 public class Main {
     public static void main(String[] args) {
         if(args.length > 0) {
@@ -26,8 +28,10 @@ public class Main {
                     break;
             }
         }
-        MainMenu m = new MainMenu();
-        m.setLocationRelativeTo(null);
-        m.setVisible(true);
+        SwingUtilities.invokeLater(() ->{
+            MainMenu m = new MainMenu();
+            m.setLocationRelativeTo(null);
+            m.setVisible(true);
+        });
     }
 }
