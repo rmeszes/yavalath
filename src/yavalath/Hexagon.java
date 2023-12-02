@@ -5,15 +5,34 @@ import java.awt.*;
 import java.awt.geom.Path2D;
 import java.io.Serializable;
 
+/**
+ * Hexagon osztály
+ * Egy mező adatainak tárolására és kezelésére készült osztály
+ */
 public class Hexagon extends JComponent implements Serializable {
+
+
+    /**A jatékos aki által éppen foglalt a mező (null, ha üres)*/
     private Player takenBy;
     private final int centerX;
     private final int centerY;
     private final int size;
     private final int rotationAngle;
+
+
+    /**
+     * Ez a változó az egyhuzamban megtalálható egyszínű hexagonok
+     * megszámolására való algoritmus használja.
+     */
     private int sameColorInRow;
-    private final int q; // axial coordinate
-    private final int r; // axial coordinate
+
+
+    /** Azt tárolja, hogy a hexagon a táblázaton belül hanyadik balról (0-tól)*/
+    private final int q;
+
+
+    /** Azt tárolja, hogy a hexagon a táblázaton belül hanyadik sorban található (0-tól)*/
+    private final int r;
 
     public Player getTakenBy() {
         return takenBy;
@@ -68,10 +87,21 @@ public class Hexagon extends JComponent implements Serializable {
         g2d.draw(hexagon);
     }
 
+
+    /**
+     * Visszaadja, hogy egy adott pontot tartalmaz-e a hexagon.
+     * @param x   the <i>x</i> coordinate of the point
+     * @param y   the <i>y</i> coordinate of the point
+     */
     @Override
     public boolean contains(int x, int y) {
         return new java.awt.Polygon(getXPoints(), getYPoints(), 6).contains(x, y);
     }
+
+
+    /**
+     * Metódus az pontok x koordinátáinak kiszámolására.
+     */
     private int[] getXPoints() {
         int[] xPoints = new int[6];
         for (int i = 0; i < 6; i++) {
@@ -81,6 +111,11 @@ public class Hexagon extends JComponent implements Serializable {
         return xPoints;
     }
 
+
+
+    /**
+     * Metódus az pontok y koordinátáinak kiszámolására.
+     */
     private int[] getYPoints() {
         int[] yPoints = new int[6];
         for (int i = 0; i < 6; i++) {

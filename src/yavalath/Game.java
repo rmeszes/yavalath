@@ -14,17 +14,44 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+/**
+ * Ez az osztály valósítja meg a játékot.
+ */
 public class Game extends JFrame implements Serializable {
     private static final Logger logger = Logger.getLogger("Game");
+
+
+    /**
+     * A mentés gomb, tagváltozóként tárolva, hogy újra tudjam állítani rajta a
+     * listenert deszerializáció után.
+     */
     private JMenuItem saveMenuItem;
     private Player p1;
     private Player p2;
     private Player p3;
+
+
+    /** Nyilván tartja a jelenleg aktív játékost */
     private Player activePlayer;
+
+
+    /** Az a label írja ki az ablak tetején, hogy melyik játékos jön épp */
     private final JLabel currentPlayerLabel = new JLabel();
+
+
+    /** Ő a kocka, amelyik mutatja az aktív játékos színét */
     private ColorCube currentPlayerColor;
     protected HexagonalMap map;
+
+
+    /** Ez a változó tartja nyilván, még hány játékos van játékban. */
     private int activePlayers;
+
+
+    /**
+     * Ez a változó mutatja, hogy bot játékos aktív-e, azért, hogy máshol tudni lehessen,
+     * hogyan viselkedjen a játék
+     */
     private boolean isBotCurrentlyActive;
 
     public boolean isBotCurrentlyActive() {
@@ -44,6 +71,11 @@ public class Game extends JFrame implements Serializable {
     public int getActivePlayers() {
         return activePlayers;
     }
+
+    /**
+     * Függvény a jelenlegi aktív játékos kiesésére.
+     * Fontos a parancsok sorrendje, különben könnyen rossz játékosra kerülhet sor utána.
+     */
     public void takeOutPlayer() {
         Player toTakeOut = activePlayer;
         nextPlayer();
@@ -51,11 +83,17 @@ public class Game extends JFrame implements Serializable {
         activePlayers--;
     }
 
+    /**
+     * A deszerializáció során elveszett listenerek újra-állítására.
+     */
     public void reInitialize() {
         saveMenuItem.addActionListener(new SaveMenuItemListener(this));
         map.reInitialize();
     }
 
+    /**
+     * A Game osztály konstruktorában meghívandó
+     */
     private void initializeGame(Map<Integer,Player> players,int mapSize) {
         p1 = players.get(1);
         p2 = players.get(2);
@@ -108,6 +146,11 @@ public class Game extends JFrame implements Serializable {
 
 
     }
+
+    /**
+     * @param players A játékosok, beállítva, akikkel a játék elindul.
+     * @param mapSize A generálandó pálya oldalhossza. (ennyi hexagon lesz per oldal)
+     */
     public Game(Map<Integer,Player> players,int mapSize) {
         super("Yavalath");
         setResizable(false);
@@ -117,6 +160,14 @@ public class Game extends JFrame implements Serializable {
     public Player getActivePlayer() {
         return activePlayer;
     }
+
+    /**
+     * Megtalálja és beállítja a következő aktív játékost, figyelembe véve azt,
+     * hogy ki van még játékban.
+     * Ha a következő játékos bot, akkor ezt beállítja,
+     * majd elvégzi a várakozást és végrehajta a bot lépését.
+     * Játékosnév hossz miatt, ha szükséges, újraméretezi az ablakot.
+     */
     public void nextPlayer() {
         ArrayList<Player> playersInGame = new ArrayList<>(3);
         if(p1.isInGame()) playersInGame.add(p1);
@@ -147,16 +198,24 @@ public class Game extends JFrame implements Serializable {
         }
     }
 
+    /**
+     * Egy kocka ami képes egy színt megjeleníteni.
+     */
     private static class ColorCube extends JButton {
         public ColorCube(Dimension d, Color c) {
             setPreferredSize(d);
             setBackground(c);
+            setFocusable(false);
         }
         public void setColor(Color c) {
             setBackground(c);
         }
     }
-    public static void main(String[] args) { // csak tesztelésre
+
+    /**
+     * Main metódus, csak gyors indításhoz, tesztelés érdekében.
+     */
+    public static void main(String[] args) {
         Map<Integer, Player> dummyPlayers = HashMap.newHashMap(3);
         dummyPlayers.put(1,new Player("Játékos 1",Color.RED, Player.Type.HUMAN));
         dummyPlayers.put(2,new Player("Játékos 2",Color.MAGENTA, Player.Type.BOT));
@@ -167,6 +226,10 @@ public class Game extends JFrame implements Serializable {
         });
     }
 
+    /**
+     * Ez a listener felelős a játék mentéséért és bezárásáért, amikor ez a gomb megnyomódik.
+     * @param parent A Game példány, amit elment és bezár majd.
+     */
     private record SaveMenuItemListener(Game parent) implements ActionListener {
         @Override
             public void actionPerformed(ActionEvent ae) {

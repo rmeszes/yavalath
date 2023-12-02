@@ -9,6 +9,12 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Logger;
 
+
+/**
+ * Hexagonal map osztály
+ * Ez az osztály tartalmazza a Hexagon-ok gyűjteményét és
+ * a kezelésükkel kapcsolatos függvényeket.
+ */
 public class HexagonalMap extends JPanel implements Serializable {
     private static final Logger logger = Logger.getLogger("HexagonalMap");
     private static final Random rnd = new Random();
@@ -16,6 +22,9 @@ public class HexagonalMap extends JPanel implements Serializable {
     private static final int GRID_Y_OFFSET = 50;
     protected final ArrayList<Hexagon> hexagons;
     private final Game game;
+
+
+    /** A még szabad mezők száma.*/
     protected int freeFields;
     private boolean isGameOver;
 
@@ -23,6 +32,10 @@ public class HexagonalMap extends JPanel implements Serializable {
         return isGameOver;
     }
 
+
+    /**
+     * Deszerializáció után szükséges műveletek.
+     */
     public void reInitialize() {
         addMouseListener(new MouseAdapter() {
             @Override
@@ -84,6 +97,12 @@ public class HexagonalMap extends JPanel implements Serializable {
         }
 
     }
+
+
+    /**
+     * Megpróbál elfoglalni egy mezőt egy játékos számára
+     * @return Az elfoglalás sikeressége.
+     */
     protected boolean tryToTakeField(Hexagon h, Player p) {
         if(h.getTakenBy() == null) {
             h.setTakenBy(p);
@@ -112,6 +131,11 @@ public class HexagonalMap extends JPanel implements Serializable {
         showDialog(game.getActivePlayer().getName() + " nyert!");
     }
 
+
+    /**
+     * Megjelenít egy ablakot, ami tájékoztatja a játékost a játék eredményéről.
+     * @param msg A megjelenítendő üzenet.
+     */
     private void showDialog(String msg) {
         isGameOver = true;
         game.setEnabled(false);
@@ -126,6 +150,10 @@ public class HexagonalMap extends JPanel implements Serializable {
         dialog.setVisible(true);
     }
 
+
+    /**
+     * A hexagonok kirajzolására
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -169,6 +197,9 @@ public class HexagonalMap extends JPanel implements Serializable {
             return neighboursOfEven(qDiff,rDiff);
         }
     }
+
+
+
 
     private GameState gameStateCheck() {
         Player lastPlayer = game.getActivePlayer();

@@ -9,6 +9,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+/**
+ * Ez az ablak a szabályok megjelenítésére van
+ */
 public class GameRulesFrame extends JFrame {
     private static final Logger logger = Logger.getLogger("GameRulesFrame");
     public GameRulesFrame() {

@@ -5,6 +5,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,9 +29,9 @@ public class MainMenu extends JFrame {
     private final ColorPicker player3ColorPicker = new ColorPicker();
     private final JButton startGameButton = new JButton("Játék indítása");
 
-    private final JTextField player1NameField = new JTextField("Játékos 1");
-    private final JTextField player2NameField = new JTextField("Játékos 2");
-    private final JTextField player3NameField = new JTextField("Játékos 3");
+    private final JTextField player1NameField = new JTextField();
+    private final JTextField player2NameField = new JTextField();
+    private final JTextField player3NameField = new JTextField();
     private final JComboBox<Integer> mapSizeChooser = new JComboBox<>();
 
 
@@ -53,7 +56,30 @@ public class MainMenu extends JFrame {
         return player3ColorPicker.currentColor;
     }
 
+    private static class JTextFieldLimited extends PlainDocument {
+        private final int limit;
+        public JTextFieldLimited(String s, int limit) {
+            super();
+            this.limit = limit;
+            try {
+                this.insertString(0, s, super.getAttributeContext().getEmptySet());
+            } catch (BadLocationException ignored) {
+                //will not happen
+            }
+        }
+
+        @Override
+        public void insertString( int offset, String  str, AttributeSet attr ) throws BadLocationException {
+            if (str == null) return;
+
+            if ((getLength() + str.length()) <= limit) {
+                super.insertString(offset, str, attr);
+            }
+        }
+    }
+
     private void initializeComponents() {
+
         TextFieldListener l = new TextFieldListener();
         player1NameField.setEnabled(false);
         player2NameField.setEnabled(false);
@@ -61,6 +87,9 @@ public class MainMenu extends JFrame {
         player1NameField.getDocument().addDocumentListener(l);
         player2NameField.getDocument().addDocumentListener(l);
         player3NameField.getDocument().addDocumentListener(l);
+        player1NameField.setDocument(new JTextFieldLimited("Játékos 1",15));
+        player2NameField.setDocument(new JTextFieldLimited("Játékos 2",15));
+        player3NameField.setDocument(new JTextFieldLimited("Játékos 3",15));
 
 
         JPanel newGamePanel = new JPanel();
