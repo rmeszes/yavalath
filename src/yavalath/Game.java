@@ -171,6 +171,7 @@ public class Game extends JFrame implements Serializable {
      * Játékosnév hossz miatt, ha szükséges, újraméretezi az ablakot.
      */
     public void nextPlayer() {
+        if(map.isGameOver()) return;
         ArrayList<Player> playersInGame = new ArrayList<>(3);
         if(p1.isInGame()) playersInGame.add(p1);
         if(p2.isInGame()) playersInGame.add(p2);

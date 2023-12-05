@@ -89,6 +89,7 @@ public class HexagonalMap extends JPanel implements Serializable {
         showDialog("Nincs több szabad mező");
     }
     public void botStep(Player bot) {
+        if(isGameOver()) return;
         boolean hasStepped = false;
         int size = hexagons.size();
         while(!hasStepped) {
