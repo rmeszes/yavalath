@@ -148,6 +148,7 @@ public class HexagonalMap extends JPanel implements Serializable {
         dialog.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         dialog.setSize(200,100);
         dialog.setLocationRelativeTo(null);
+        dialog.setResizable(false);
         dialog.setVisible(true);
     }
 
