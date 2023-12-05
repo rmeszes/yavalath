@@ -12,12 +12,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.logging.Logger;
 
 /**
  * Ez az osztály valósítja meg a játékot.
  */
 public class Game extends JFrame implements Serializable {
+    private static final Random rnd = new Random();
     private static final Logger logger = Logger.getLogger("Game");
 
 
@@ -192,7 +194,7 @@ public class Game extends JFrame implements Serializable {
         pack();
 
         if(isBotCurrentlyActive && !map.isGameOver()) {
-            Timer timer = new Timer(1000, e -> map.botStep(activePlayer));
+            Timer timer = new Timer(rnd.nextInt(500,3000), e -> map.botStep(activePlayer));
             timer.setRepeats(false);
             timer.start();
         }
